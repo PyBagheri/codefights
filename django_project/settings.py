@@ -47,11 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Local apps
-    'accounts.apps.AccountsConfig',
-    'pages.apps.PagesConfig',
-    'blog.apps.BlogConfig',
-    'chats.apps.ChatsConfig',
-    'fights.apps.FightsConfig',
+    'accounts',
+    'pages',
+    'blog',
+    'chats',
+    'fights',
 ]
 
 MIDDLEWARE = [
