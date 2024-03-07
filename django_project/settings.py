@@ -35,6 +35,8 @@ DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = []
+
 
 # Application definition
 
@@ -135,8 +137,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# If the "Origin" header is not present in an HTTPS request,
+# the CSRF middleware requires the "Referrer" header. So, 
+# instead of completely aborting the "Referrer" header, we 
+# just include them for the same-origin situation.
+#
+# Currently, we have implemented the WebSocket handling
+# manually, but still use Django's CSRF middleware. So
+# this also applies to the WebSockets for us.
+SECURE_REFERRER_POLICY = 'same-origin'
 
-
+# Custom settings entry.
+WEBSOCKET_ROOT_URLCONF = 'django_project.websocket.urls'
 
 
 
