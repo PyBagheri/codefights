@@ -1,3 +1,4 @@
+import asyncio
 from django.conf import settings
 from django.core.handlers.asgi import ASGIRequest
 from django.middleware.csrf import CsrfViewMiddleware
@@ -19,12 +20,73 @@ session_engine = import_module(settings.SESSION_ENGINE)
 csrf_middleware = CsrfViewMiddleware(lambda _: None)
 
 
+async def websocket_receive(scope, receive, send, user):
+    '''
+    Handle WebSocket message reception after the authentication
+    and CSRF validation. Pass each message to the corresponding
+    WebSocket view (defined as functions in WebSocket urlconf).
+    
+    This async function must only return when the connection is 
+    terminated (whether by the function itself or by timeout, etc.)
+    This would signal the websocket_application to stop the task
+    of awaiting a message from the web app to be send to the client.
+    '''
+    
+    while True:
+        event = await receive()
+        
+        if event['type'] == 'websocket.receive':     
+            path = scope['path']
+            if settings.APPEND_SLASH and not path.endswith('/'):
+                path += '/'
+            
+            try:
+                # 'path' will contain a leading slash, but
+                # the urlconf entries should not, as 'resolve'
+                # will take care of it.
+                ws_view, args, kwargs = resolve(path, urlconf=settings.WEBSOCKET_ROOT_URLCONF)                
+            except Resolver404:
+                # Don't bother keeping the socket open.
+                # maybe someone is fiddling with the API :/
+                await send({'type': 'websocket.close'})
+                return
+            
+            # Basically, our WebSocket will be a private API
+            # for the moment. Thus there shouldn't be any
+            # wrong or bad requests, unless someone is messing
+            # with the API, in which case we don't bother keeping
+            # the connection open.
+            #
+            # It's the WebSocket view's responsibility to raise
+            # a BadRequest error in case of a "bad" request.
+            try:
+                response = await ws_view(user, event['text'], *args, **kwargs)
+                
+                # Note that 'response' might be an empty string,
+                # so it's important to check only againts None
+                # for the case the view doesn't return anything
+                # or just returns None.
+                if response is not None:
+                    await send({'type': 'websocket.send', 'text': response})
+            except BadRequest:
+                await send({'type': 'websocket.close'})
+                return
+            
+        elif event['type'] == 'websocket.disconnect':
+            # possible cleanups or signals.
+            break
+
+
+async def websocket_send(scope, receive, send):
+    pass
+
+
 # TODO:
 # 1. Limit the number of simultaneous WS connection from an IP.
 async def websocket_application(scope, receive, send):
     '''
-    Authenticate and validate WebSocket connections and pass
-    them to corresponding functions in applications.
+    Authenticate and validate WebSocket connections and create
+    async tasks for handling WebSocket send and receive events.
     
     The assumption here is that the WSGI version of the website
     will provide the user with session and CSRF cookies and
@@ -62,61 +124,59 @@ async def websocket_application(scope, receive, send):
     # this will be set to the corresponding user object.
     user = None
     
-    while True:
-        event = await receive()
+    # Waiting for handshake ('websocket.connect')
+    event = await receive()
+    
+    if event['type'] == 'websocket.connect':
+        # A bit of hacking: let the CSRF middleware think that
+        # we are passing it a POST request, so it directly jumps onto
+        # validating the token.
+        scope['method'] = 'POST'
         
-        # A new handshake.
-        if event['type'] == 'websocket.connect':
-            # A bit of hacking: let the CSRF middleware think that
-            # we are passing it a POST request, so it directly jumps onto
-            # validating the token.
-            scope['method'] = 'POST'
+        # no 'body_file' argument, since we don't care about communication for this,
+        # we just want to parse the ASGI 'scope' into a request object that we can pass
+        # to the CSRF middleware to check if the token is OK.
+        request = ASGIRequest(scope, None)
+                    
+        session_id = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
+        
+        if not session_id:
+            await send({'type': 'websocket.close'})
+            return
             
-            # no 'body_file' argument, since we don't care about communication for this,
-            # we just want to parse the ASGI 'scope' into a request object that we can pass
-            # to the CSRF middleware to check if the token is OK.
-            request = ASGIRequest(scope, None)
-                        
-            session_id = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
-            
-            if not session_id:
-                await send({'type': 'websocket.close'})
-                return
-                
-            # This doesn't immediately raise an error if
-            # the session id cookie is invalid. We have to 
-            # check a key to see.
-            session = session_engine.SessionStore(session_id)
-            
-            try:
-                # session key is the user id. session[BACKEND_SESSION_KEY] refers
-                # to the path of the backend that has originally authenticated
-                # the user.
-                user = await sync_to_async(
-                    lambda: load_backend(session[BACKEND_SESSION_KEY]).get_user(session[SESSION_KEY])
-                )()
-                                
-                # Authentication has been successful. I explicitly
-                # put this inside the try block to avoid future bugs;
-                # connection must never be accepted, unless the user
-                # is authenticated. Otherwise we might face DOS attacks.
-                await send({'type': 'websocket.accept'})
-            except KeyError:
-                # Invalid session id cookie
-                await send({'type': 'websocket.close'})
-                return
-            
+        # This doesn't immediately raise an error if
+        # the session id cookie is invalid. We have to 
+        # check a key to see.
+        session = session_engine.SessionStore(session_id)
+        
+        try:
+            # session key is the user id. session[BACKEND_SESSION_KEY] refers
+            # to the path of the backend that has originally authenticated
+            # the user.
+            user = await sync_to_async(
+                lambda: load_backend(session[BACKEND_SESSION_KEY]).get_user(session[SESSION_KEY])
+            )()
+                            
+            # Authentication has been successful. I explicitly
+            # put this inside the try block to avoid future bugs;
+            # connection must never be accepted, unless the user
+            # is authenticated. Otherwise we might face DOS attacks.
+            await send({'type': 'websocket.accept'})
+        except KeyError:
+            # Invalid session id cookie
+            await send({'type': 'websocket.close'})
+            return
+        
 
-            # Time for CSRF validation. The immediately next
-            # message must be the 'csrfmiddlewaretoken'.
-            #
-            # If the ASGI web server crashes, the sockets will
-            # get destroyed, and thus after the server is restarted,
-            # a previously connected client cannot send data (which
-            # will emerge as the 'websocket.receive' event) and
-            # bypass the CSRF validation.
-            first_next_event = await receive()
-            
+        # Time for CSRF validation. The immediately next
+        # message must be the 'csrfmiddlewaretoken'.
+        #
+        # If the ASGI web server crashes at this point,
+        # there will be no tasks created for handling
+        # send and receive. Thus this cannot be bypassed.
+        first_next_event = await receive()
+        
+        if first_next_event['type'] == 'websocket.receive':
             # The actual request is a WebSocket one, not HTTP.
             # Here we are (ab)using the CSRF middleware by making
             # it think that this is an HTTP POST request, since
@@ -136,47 +196,22 @@ async def websocket_application(scope, receive, send):
             if csrf_middleware.process_view(request, lambda _: None, (), ()) is not None:
                 await send({'type': 'websocket.close'})
                 return
-
-        elif event['type'] == 'websocket.disconnect':
-            # possible cleanups or signals.
-            break
-
-        elif event['type'] == 'websocket.receive':
-            # At this stage, the security checks are over
-            # and 'user' is guaranteed to exist.
-            
-            path = scope['path']
-            if settings.APPEND_SLASH and not path.endswith('/'):
-                path += '/'
-            
-            try:
-                # 'path' will contain a leading slash, but
-                # the urlconf entries should not, as 'resolve'
-                # will take care of it.
-                ws_view, args, kwargs = resolve(path, urlconf=settings.WEBSOCKET_ROOT_URLCONF)                
-            except Resolver404:
-                # Don't bother keeping the socket open.
-                # maybe someone is fiddling with the API :/
-                await send({'type': 'websocket.close'})
-                return
-            
-            # Basically, our WebSocket will be a private API
-            # for the moment. Thus there shouldn't be any
-            # wrong or bad requests, unless someone is messing
-            # with the API, in which case we don't bother keeping
-            # the connection open.
-            #
-            # It's the WebSocket view's responsibility to raise
-            # a BadRequest error in case of a "bad" request.
-            try:
-                response = await ws_view(user, event['text'], *args, **kwargs)
-                
-                # Note that 'response' might be an empty string,
-                # so it's important to check only againts None
-                # for the case the view doesn't return anything
-                # or just returns None.
-                if response is not None:
-                    await send({'type': 'websocket.send', 'text': response})
-            except BadRequest:
-                await send({'type': 'websocket.close'})
-                return
+        else:  # websocket.disconnect
+            return
+    
+    
+    # Reacing here implies successful authentication and CSRF validation.
+    
+    recv_task = asyncio.create_task(websocket_receive(scope, receive, send, user))
+    send_task = asyncio.create_task(websocket_send(scope, receive, send))
+    
+    for coro in asyncio.as_completed([recv_task, send_task]):
+        await coro
+        
+        # The receive function has returned, signaling the
+        # end of the WebSocket connection. Note that the 
+        # send function is not meant to (and shouldn't) return. 
+        
+        # The connection is closed, thus we no more need to 
+        # keep awaiting send events from our web application.
+        send_task.cancel()

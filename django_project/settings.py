@@ -137,6 +137,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+
+USERNAME_MIN_LENGTH = 5
+
+AUTH_USER_MODEL = 'accounts.User'
+
+
 # If the "Origin" header is not present in an HTTPS request,
 # the CSRF middleware requires the "Referrer" header. So, 
 # instead of completely aborting the "Referrer" header, we 
@@ -149,9 +155,3 @@ SECURE_REFERRER_POLICY = 'same-origin'
 
 # Custom settings entry.
 WEBSOCKET_ROOT_URLCONF = 'django_project.websocket.urls'
-
-
-
-USERNAME_MIN_LENGTH = 5
-
-AUTH_USER_MODEL = 'accounts.User'
