@@ -24,6 +24,15 @@ csrf_middleware = CsrfViewMiddleware(lambda _: None)
 redis_client = redis.asyncio.from_url(settings.REDIS_SERVER_URL)
 
 
+# Using Django's AnonymousUser without having the apps loaded
+# causes problem. We only need the 'is_authenticated' attribute.
+class _AnonymousUser:
+    is_authenticated = False
+    
+# Just keep one instance.
+_anonymous_user = _AnonymousUser()
+
+
 async def websocket_receive(scope, receive, send, ws_view):
     """Handle WebSocket messages after authentication and CSRF validation.
 
@@ -117,7 +126,7 @@ async def websocket_application(scope, receive, send):
             await send({'type': 'websocket.close'})
             
         return
-    
+
     # A bit of hacking: let the CSRF middleware think that
     # we are passing it a POST request, so it directly jumps onto
     # validating the token.
@@ -127,33 +136,53 @@ async def websocket_application(scope, receive, send):
     # we just want to parse the ASGI 'scope' into a request object that we can pass
     # to the CSRF middleware to check if the token is OK.
     request = ASGIRequest(scope, None)
-                
-    session_id = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
     
-    if not session_id:
+    if not settings.CSRF_COOKIE_NAME in request.COOKIES:
         await send({'type': 'websocket.close'})
         return
-        
-    # This doesn't immediately raise an error if
-    # the session id cookie is invalid. We have to 
-    # check a key to see.
-    session = session_engine.SessionStore(session_id)
+    
+    path = scope['path']
+    if settings.APPEND_SLASH and not path.endswith('/'):
+        path += '/'
     
     try:
-        # session key is the user id. session[BACKEND_SESSION_KEY] refers
-        # to the path of the backend that has originally authenticated
-        # the user.
-        user = await sync_to_async(
-            lambda: load_backend(session[BACKEND_SESSION_KEY]).get_user(session[SESSION_KEY])
-        )()
-                        
-        # Authentication has been successful. I explicitly
-        # put this inside the try block to avoid future bugs;
-        # connection must never be accepted, unless the user
-        # is authenticated. Otherwise we might face DOS attacks.
+        # 'path' will contain a leading slash, but
+        # the urlconf entries should not, as 'resolve'
+        # will take care of it.
+        ws_view_class, args, kwargs = resolve(path, urlconf=settings.WEBSOCKET_ROOT_URLCONF)                
+    except Resolver404:
+        # Don't bother keeping the socket open.
+        # maybe someone is fiddling with the API :/
+        await send({'type': 'websocket.close'})
+        return
+                    
+    session_id = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
+    
+    if session_id:
+        # This doesn't immediately raise an error if
+        # the session id cookie is invalid. We have to 
+        # check a key to see.
+        session = session_engine.SessionStore(session_id)
+
+        try:
+            # session key is the user id. session[BACKEND_SESSION_KEY] refers
+            # to the path of the backend that has originally authenticated
+            # the user.
+            user = await sync_to_async(
+                lambda: load_backend(session[BACKEND_SESSION_KEY]).get_user(session[SESSION_KEY])
+            )()
+        except KeyError:
+            # Invalid session id cookie
+            user = _anonymous_user
+    else:
+        user = _anonymous_user
+    
+    
+    ws_view = ws_view_class(scope, user, *args, **kwargs)
+
+    if await ws_view.user_has_permission():
         await send({'type': 'websocket.accept'})
-    except KeyError:
-        # Invalid session id cookie
+    else:
         await send({'type': 'websocket.close'})
         return
     
@@ -193,28 +222,7 @@ async def websocket_application(scope, receive, send):
         return
     
     
-    # Reaching here implies successful authentication and CSRF validation.
-    path = scope['path']
-    if settings.APPEND_SLASH and not path.endswith('/'):
-        path += '/'
-    
-    try:
-        # 'path' will contain a leading slash, but
-        # the urlconf entries should not, as 'resolve'
-        # will take care of it.
-        ws_view_class, args, kwargs = resolve(path, urlconf=settings.WEBSOCKET_ROOT_URLCONF)                
-    except Resolver404:
-        # Don't bother keeping the socket open.
-        # maybe someone is fiddling with the API :/
-        await send({'type': 'websocket.close'})
-        return
-    
-    ws_view = ws_view_class(scope, user, *args, **kwargs)
-    
-    if not await ws_view.user_has_permission():
-        await send({'type': 'websocket.close'})
-        return
-    
+    # Reaching here implies successful user authorization and CSRF validation.
     
     receive_task = asyncio.create_task(websocket_receive(scope, receive, send, ws_view))
     signals_task = asyncio.create_task(websocket_signals(scope, receive, send, ws_view))

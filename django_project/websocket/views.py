@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Callable, Concatenate, NewType, Any, Coroutine
+from typing import Dict, Tuple, Callable, NewType, Any, Coroutine
 from collections.abc import AsyncGenerator
 from django.contrib.auth import get_user_model
 import redis.asyncio
