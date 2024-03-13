@@ -35,7 +35,7 @@ DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = []
 
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
 
 
 # Application definition
@@ -155,3 +155,7 @@ SECURE_REFERRER_POLICY = 'same-origin'
 
 # Custom settings entry.
 WEBSOCKET_ROOT_URLCONF = 'django_project.websocket.urls'
+
+
+
+REDIS_SERVER_URL = env.str('REDIS_SERVER_URL')
