@@ -159,3 +159,42 @@ WEBSOCKET_ROOT_URLCONF = 'django_project.websocket.urls'
 
 
 REDIS_SERVER_URL = env.str('REDIS_SERVER_URL')
+
+DOCKER_SERVER_URL = env.str('DOCKER_SERVER_URL')
+
+
+
+SIMULATION_SIMULATOR_WORKERS = 4
+SIMULATION_SIGNALS_WORKERS = 4
+
+# The Linux user with minimal previleges that will be used
+# to run the simulations.
+SIMULATOR_USERNAME = env.str('SIMULATOR_USERNAME')
+
+# The Docker image's name that was built for the coderunner (CR).
+# See simulator/coderunner.
+SIMULATOR_CR_DOCKER_IMAGE = env.str('SIMULATOR_CR_DOCKER_IMAGE')
+
+# AppArmor profile for the coderunner container.
+SIMULATOR_CR_DOCKER_AA_PROFILE = 'cr-container-profile'
+
+# Relative to the project root
+GAMES_PACKAGE = 'games'
+
+# It's recommended to be somewhere in /srv. See:
+# https://unix.stackexchange.com/questions/233343/
+UPLOADED_CODES_DIR = env.str('UPLOADED_CODES_DIR')
+
+
+REDIS_SIMULATOR_STREAM = env.str('REDIS_SIMULATOR_STREAM')
+REDIS_SIMULATOR_GROUP = env.str('REDIS_SIMULATOR_GROUP')
+
+REDIS_SIMULATION_RESULTS_STREAM = env.str('REDIS_SIMULATION_RESULTS_STREAM')
+
+
+LOGGING_ROOT = env.str('LOGGING_ROOT')
+LOGGING_FILES_PATHS = {
+    'workers': {
+        'simulator': 'workers/simulator.log'
+    }
+}
