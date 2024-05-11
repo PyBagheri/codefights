@@ -1,54 +1,17 @@
 import unittest
 
-from simulator.tests import test_base
-
-from simulator.tests.test_base import (
+from simulator.tests.base import (
+    # Will be used by Python's unittest.
     setUpModule,
     tearDownModule,
+    
+    SimulatorTests,
     
     rm_left_spaces,
 )
 
-import json
 
-
-class ResultTest(unittest.TestCase):  
-    # We include the cleanup on setup too, just
-    # to be sure. It doesn't hurt :/
-    def setUp(self):
-        self.cleanup_redis_streams()
-    
-    
-    def tearDown(self):
-        self.cleanup_redis_streams()
-    
-    
-    def cleanup_redis_streams(self):
-        test_base.redis_client.xtrim(
-            test_base.project_settings.REDIS_SIMULATOR_STREAM,
-            maxlen='0',
-        )
-        
-        test_base.redis_client.xtrim(
-            test_base.project_settings.REDIS_SIMULATION_RESULTS_STREAM,
-            maxlen='0',
-        )
-    
-    
-    def request_simulation_and_result(self, data):
-        test_base.redis_client.xadd(test_base.project_settings.REDIS_SIMULATOR_STREAM,
-            {'data': json.dumps(data)}
-        )
-        
-        # The indices: 1st (and only) stream; 2nd item (messages);
-        # 1st (and only) message; 2nd item (message data); the json raw.
-        return json.loads(test_base.redis_client.xread(
-            {test_base.project_settings.REDIS_SIMULATION_RESULTS_STREAM: '0'},
-            count=1,
-            block=0  # block until message arrives
-        )[0][1][0][1]['data'])
-        
-    
+class ResultTest(SimulatorTests, unittest.TestCase):         
     def test_different_types_can_be_sent(self):
         code = rm_left_spaces(
         """

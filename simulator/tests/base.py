@@ -1,8 +1,10 @@
 import os
+import json
 import redis
 import subprocess
 from pathlib import Path
 from simulator.tests.assets import test_django_settings as project_settings
+
 
 SIMULATOR_BASE = Path(__file__).parent.parent
 
@@ -72,3 +74,43 @@ def tearDownModule():
     
     redis_client.close()
     
+
+# A mixin to be included in simulator test cases. It does
+# cleanups and setups for redis streams and also provides
+# and interface to communicate with the simulator without
+# directly dealing with redis.
+class SimulatorTests:
+    # We include the cleanup on setup too, just
+    # to be sure. It doesn't hurt :/
+    def setUp(self):
+        self.cleanup_redis_streams()
+    
+    
+    def tearDown(self):
+        self.cleanup_redis_streams()
+    
+    
+    def cleanup_redis_streams(self):
+        redis_client.xtrim(
+            project_settings.REDIS_SIMULATOR_STREAM,
+            maxlen='0',
+        )
+        
+        redis_client.xtrim(
+            project_settings.REDIS_SIMULATION_RESULTS_STREAM,
+            maxlen='0',
+        )
+    
+    
+    def request_simulation_and_result(self, data):
+        redis_client.xadd(project_settings.REDIS_SIMULATOR_STREAM,
+            {'data': json.dumps(data)}
+        )
+        
+        # The indices: 1st (and only) stream; 2nd item (messages);
+        # 1st (and only) message; 2nd item (message data); the json raw.
+        return json.loads(redis_client.xread(
+            {project_settings.REDIS_SIMULATION_RESULTS_STREAM: '0'},
+            count=1,
+            block=0  # block until message arrives
+        )[0][1][0][1]['data'])
