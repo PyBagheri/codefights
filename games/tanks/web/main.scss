@@ -1,0 +1,191 @@
+$square-side-max: 60px;
+
+
+.info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 40px;
+
+    margin-top: 30px;
+
+    .healthes {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        flex-grow: 1;
+
+        .health {
+            font-size: 30px;
+            min-width: 70px;
+    
+            text-align: center;
+    
+            transition: .5s;
+        }
+    
+        .health-label {
+            font-size: 20px;
+    
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+    }
+}
+
+
+.control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 40px;
+
+    margin-top: 30px;
+
+    .control-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid black;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        user-select: none;
+        cursor: pointer;
+
+        font-size: 25px;
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                background-color: black;
+                color: white;
+            }
+        }
+
+        &.next, &.next10 {
+            margin-right: 10px;
+        }
+
+        &.prev, &.prev10 {
+            margin-left: 10px;
+        }
+    }
+
+    .ticks {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 20px;
+
+        flex-basis: 100px;
+
+        .slash {
+            margin: 0 5px 0 5px;
+        }
+    }
+}
+
+#game-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    width: 100%;
+}
+
+.board {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: center;
+
+    .board-column {
+        display: flex;
+        flex-direction: column-reverse;  // reverse for the right coordinates
+
+        border-right: 1px black solid;
+
+        width: min(100%, $square-side-max);
+
+        &:first-child {
+            border-left: 1px black solid;
+        }
+        
+        .board-square {
+            &:last-child {
+                border-top: 1px solid black;
+            }
+
+            border-bottom: 1px solid black;
+
+            max-height: $square-side-max;
+            max-width: $square-side-max;
+
+            width: min(100%, $square-side-max);
+            aspect-ratio: 1 / 1;
+
+            box-sizing: border-box;
+
+            transition: 500ms;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            // since the tank child will have position: absolute,
+            // this is necessary for relative sizing.
+            position: relative;
+        }
+    }
+}
+
+.tank {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 1s;
+
+    // for overlaps
+    position: absolute;
+
+    box-sizing: border-box;
+
+    z-index: 100;
+
+    .tank-body {
+        height: calc(100% * (3/4));
+        width: calc(100% * (1/2));
+
+        border-radius: 5px;
+    
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        transition: 200ms;
+    
+        box-sizing: border-box;
+
+        .tank-arrow {
+            width: calc(100% / 2);
+            aspect-ratio: 1 / 1;
+            background: white;
+            border-radius: 50%;
+            margin-bottom: calc(100% / 3);
+        }
+    }
+}
