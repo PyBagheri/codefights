@@ -1,19 +1,13 @@
+from games.base import Game
+
 # a 1-player test game
-class TestGame1:
-    def __init__(self, game_settings, player_count):
-        self.game_settings = game_settings
-        self.player_count = player_count
-    
+class TestGame1(Game):
     def get_limits(self):
         return {
             'cpu_sec': 5,
             'cpu_nsec': 0,
             'mem_bytes': 70_000_000
         }
-    
-    def set_controllers(self, cr_controllers, initial_players):
-        self.cr_controllers = cr_controllers
-        self.initial_players = initial_players
     
     def simulate(self):
         if not self.initial_players:
