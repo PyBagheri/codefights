@@ -114,20 +114,5 @@ class GameResult(models.Model):
     # we need more elaborate explanations, we can also use this as
     # a JSON storage (and possibly increase the max length).
     explanation = models.CharField(max_length=100, blank=True)
-    
-    
-    # FIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    # # Give a human-readable explanation to be displayed to the users. ################# doc string #########################33
-    # def get_explanation(self):
-    #     """must be overriden by each game's GameResult class."""
-    #     return NotImplementedError
-    
-    
-    # It's JSON, but since we don't really make any db-related uses
-    # out of it, we rather keep it as a TextField.
+
     data = models.TextField()
-    
-    # def __str__(self):       
-    #     return f'{self.fight.game.title}'
-    
-    
