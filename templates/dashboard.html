@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'fights/dashboard.css' %}">
+{% endblock header %}
+
+{% block content %}
+<div class="info">
+    {% if ongoing_fights %}
+    <div class="info-label">Ongoing Fight</div>
+    {% endif %}
+    {% for fight in ongoing_fights %}
+    {% comment %} {% if current_fight.started_at %} {% endcomment %}
+    
+    {% comment %} {% else %} {% endcomment %}
+    {% comment %} <div class="info-label">Pending Fight</div> {% endcomment %}
+    {% comment %} {% endif %} {% endcomment %}
+    <div class="info-fight{% if fight.started_at %} info-ongoing-fight{% else %} info-pending-current-fight{% endif %}">
+        <div class="info-fight-center">
+            <div class="info-fight-center-top">
+                <div class="info-fight-game-title">{{ fight.game.title }}</div>
+                <div class="info-fight-datetime" title="{{ fight.started_at }} UTC">Simulation started {{ fight.started_at|timesince }} ago</div>
+            </div>
+            <div class="info-fight-center-bottom">
+                <div class="info-fight-player-list">
+                    {% for player in fight.players.all %}
+                    <span class="info-fight-player">@{{ player.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="info-fight-right">
+            <a class="info-fight-right-view" href="{{ fight.get_absolute_url }}">VIEW</a>
+        </div>
+    </div>
+    {% endfor %}
+    {% if hostings %}
+    <div class="info-label">Hosted Fight</div>
+    {% endif %}
+    {% for hosting in hostings %}
+    <div class="info-pending-fight">
+        <div class="info-pending-fight-left">
+            <div class="info-pending-fight-top">
+                <div class="info-pending-fight-game-title">{{ hosting.fight.game.title }}</div>
+                <div class="info-pending-fight-datetime" title="{{ hosting.fight.created_at }} UTC">{{ hosting.fight.created_at|timesince }} ago</div>
+            </div>
+            <div class="info-pending-fight-bottom">
+                {% if hosting.accepted_invitations %}
+                <div class="info-pending-fight-player-list">
+                    <span class="label-accepted">Accepted:&nbsp;&nbsp;&nbsp;</span>
+                    {% for invitation in hosting.accepted_invitations %}
+                    <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="info-pending-fight-player-list">
+                    <span class="label-pending">Pending:&nbsp;&nbsp;&nbsp;</span>
+                    {% for invitation in hosting.pending_invitations %}
+                    <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="info-pending-fight-right">
+            {% comment %}
+                TODO: the logic of whether the fight can be started
+                or not should be specified in the view, not the template.
+            {% endcomment %}
+            {% if hosting.accepted_invitations %}
+            <div class="info-pending-fight-button info-pending-fight-start post-confirm-dialog-button" data-post-url="{% url 'api_start_hosted_fight' %}" data-dialog-title="Start the hosted fight?">START</div>
+            {% endif %}
+            <div class="info-pending-fight-button info-pending-fight-cancel post-confirm-dialog-button" data-post-url="{% url 'api_cancel_hosted' %}" data-dialog-title="Cancel the hosted fight?">CANCEL</div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if invitations %}
+    <div class="info-label">Invitations</div>
+    {% endif %}
+    {% for invitation in invitations %}
+    <div class="info-pending-fight">
+        <div class="info-pending-fight-left">
+            <div class="info-pending-fight-top">
+                <div class="info-pending-fight-invite-title"><span class="label-game-title">{{ invitation.hosting.fight.game.title }}</span> by <span class="label-host">@{{ invitation.hosting.host.username }}</span></div>
+                <div class="info-pending-fight-datetime" title="{{ invitation.hosting.fight.created_at }} UTC">{{ invitation.hosting.fight.created_at|timesince }} ago</div>
+            </div>
+            <div class="info-pending-fight-bottom">
+                {% if invitation.hosting.accepted_invitations %}
+                <div class="info-pending-fight-player-list">
+                    <span class="label-accepted">Accepted:&nbsp;&nbsp;&nbsp;</span>
+                    {% for invitation in invitation.hosting.accepted_invitations %}
+                    <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="info-pending-fight-player-list">
+                    <span class="label-pending">Pending:&nbsp;&nbsp;&nbsp;</span>
+                    {% for invitation in invitation.hosting.pending_invitations %}
+                    <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="info-pending-fight-right">
+            <a href="{{ invitation.get_absolute_url }}" class="info-pending-fight-button info-pending-fight-view">VIEW</a>
+            <div class="info-pending-fight-button info-pending-fight-dismiss post-confirm-dialog-button" data-post-url="{% url 'api_dismiss_invitation' invitation.uuid.hex %}" data-dialog-title="Dismiss the invitation?">DISMISS</div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if past_playerfights %}
+    <div class="info-label">Fights History</div>
+    <div class="info-fight-list">
+        {% for playerfight in past_playerfights %}
+        <div class="info-fight">
+            <div class="info-fight-left">
+                <div class="info-fight-game-result">
+                    {% if playerfight.fight.game.conclusion_system == ConclusionSystems.VICTORY_DRAW %}
+                        {% if playerfight.won_or_rank is None %}
+                        <div class="info-fight-game-result-draw" title="Draw">D</div>
+                        {% elif playerfight.won_or_rank %}
+                        <div class="info-fight-game-result-won" title="Won">W</div>
+                        {% else %}
+                        <div class="info-fight-game-result-lost" title="Lost">L</div>
+                        {% endif %}
+                    {% elif playerfight.fight.game.conclusion_system == ConclusionSystems.RANK_BASED %}
+                        {% if playerfight.won_or_rank == 1 %}
+                        <span class="info-fight-game-result-rank rank-first">{{ playerfight.won_or_rank }}</span>
+                        {% elif playerfight.won_or_rank == 2 %}
+                        <span class="info-fight-game-result-rank rank-second">{{ playerfight.won_or_rank }}</span>
+                        {% elif playerfight.won_or_rank == 3 %}
+                        <span class="info-fight-game-result-rank rank-third">{{ playerfight.won_or_rank }}</span>
+                        {% else %}
+                        <span class="info-fight-game-result-rank">{{ playerfight.won_or_rank }}</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-fight-center">
+                <div class="info-fight-center-top">
+                    <div class="info-fight-game-title">{{ playerfight.fight.game.title }}</div>
+                    <div class="info-fight-datetime" title="{{ playerfight.fight.finished_at }} UTC">{{ playerfight.fight.finished_at|timesince }} ago</div>
+                </div>
+                <div class="info-fight-center-bottom">
+                    <div class="info-fight-player-list">
+                        {% for player in playerfight.fight.players.all %}
+                        <span class="info-fight-player">@{{ player.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="info-fight-right">
+                <a class="info-fight-right-view" href="{{ playerfight.fight.get_absolute_url }}">VIEW</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'player_fights_list' %}" class="info-view-all-fights">View all Fights</a>
+    {% endif %}
+</div>
+<div class="sidebar">
+    <div class="sidebar-buttons-wrapper">
+        <div class="sidebar-button btn-view-games">View Games</div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    var csrf_token = "{{ csrf_token }}";
+</script>
+<script src="{% static 'fights/dashboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'fights/view_invitation.css' %}">
+{% endblock header %}
+
+{% block content %}
+<div class="info">
+    <div class="info-label"><div><a class="info-label-host-username">@{{ invitation.hosting.host.username }}</a> invited you to <a class="info-label-game-title">{{ invitation.hosting.fight.game.title }}</a></div>{% if invitation.hosting.fight.is_public %}<span class="info-label-is-public">public</span>{% endif %}</div>
+    <div class="info-datetime" title="{{ invitation.hosting.fight.created_at }} UTC">{{ invitation.hosting.fight.created_at|timesince }} ago</div>
+    <div class="info-invitation-players">
+        {% if invitation.hosting.accepted_invitations %}
+        <div class="info-pending-fight-player-list">
+            <span class="label-accepted">Accepted:&nbsp;&nbsp;&nbsp;</span>
+            {% for invitation in accepted_invitations %}
+            <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="info-pending-fight-player-list">
+            <span class="label-pending">Pending:&nbsp;&nbsp;&nbsp;</span>
+            {% for invitation in pending_invitations %}
+            <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    {% comment %} TO BE DEVELOPED LATER {% endcomment %}
+    {% comment %} <div class="info-fight-form-game-settings"></div> {% endcomment %}
+
+    {% if attended_fights_full %}
+    {% if not invitation.is_accepted %}
+    <div class="info-text">You may only attend a fight after your current fight is done or canceled.</div>
+    {% endif %}
+    {% else %}
+    <div class="info-fight-form">
+        <div class="info-fight-form-label">Code:</div>
+        {{ form.code.errors }}
+        <div class="info-fight-form-code-select">
+            {% comment %} TO BE DEVELOPED LATER {% endcomment %}
+            {% comment %} <div class="info-fight-form-code-select-label">Upload a code file or select from your presets.</div> {% endcomment %}
+            <form method="post" class="info-fight-form-element" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" class="info-fight-form-code-select-upload" name="code" />
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<div class="sidebar">
+    <div class="sidebar-buttons-wrapper">
+        {% if invitation.is_accepted %}
+        <div class="sidebar-button btn-cancel-attendance post-confirm-dialog-button" data-post-url="{% url 'api_cancel_attendance' invitation.uuid %}" data-dialog-title="Cancel your attendance?">Cancel Attendance</div>
+        {% else %}
+        {% if not attended_fights_full %}
+        <div class="sidebar-button btn-attend-fight">Attend Fight</div>
+        {% endif %}
+        <div class="sidebar-button btn-dismiss-invitation post-confirm-dialog-button" data-post-url="{% url 'api_dismiss_invitation' invitation.uuid %}" data-dialog-title="Dismiss this invitation?">Dismiss Invitation</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    var csrf_token = "{{ csrf_token }}";
+    {% if form %}
+    var players_list = JSON.parse("{{ form.usernames_list.value|escapejs }}");
+    {% endif %}
+</script>
+<script src="{% static 'fights/view_invitation.js' %}"></script>
+{% endblock scripts %}
+

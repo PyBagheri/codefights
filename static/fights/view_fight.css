@@ -1,0 +1,158 @@
+.info {
+  color: white;
+  flex-grow: 1;
+}
+.info .info-fight-canvas {
+  background-color: rgba(0, 0, 0, 0.337);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.info .info-fight-canvas .info-fight-canvas-top {
+  flex-grow: 1;
+  padding-top: 1rem;
+}
+.info .info-fight-canvas .info-fight-canvas-bottom .info-fight-game-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: rgb(175, 175, 175);
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight-canvas .info-fight-canvas-bottom .info-fight-game-title {
+    transition: 0.2s;
+  }
+  .info .info-fight-canvas .info-fight-canvas-bottom .info-fight-game-title:hover {
+    color: rgb(132, 132, 132);
+  }
+}
+.info .info-fight-datetimes {
+  font-size: 1rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 0.3rem;
+  margin-top: 1.5rem;
+  color: rgb(167, 167, 167);
+}
+.info .info-fight-explanation {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+.info .info-fight-explanation ion-icon {
+  font-size: 2rem;
+  margin-right: 0.5rem;
+}
+.info .info-fight-code-details {
+  margin-top: 5rem;
+}
+.info .info-fight-code-details .info-fight-code-details-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+.info .info-fight-code-details .info-fight-code-details-status {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+.info .info-fight-code-details .info-fight-code-details-status ion-icon {
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+}
+.info .info-fight-code-details .info-fight-code-details-status .info-fight-code-details-status-reason {
+  font-weight: 800;
+  color: rgb(255, 183, 183);
+}
+.info .info-fight-code-details .info-fight-code-details-download {
+  height: 3rem;
+  width: fit-content;
+  margin-top: 2rem;
+  font-weight: 600;
+  align-self: flex-start;
+  padding: 0.6rem 0.8rem;
+  background-color: rgb(3, 78, 125);
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  border-radius: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  font-size: 1.3rem;
+  box-sizing: border-box;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight-code-details .info-fight-code-details-download {
+    transition: 0.2s;
+  }
+  .info .info-fight-code-details .info-fight-code-details-download:hover {
+    background-color: rgb(4, 63, 99);
+  }
+}
+
+.sidebar .sidebar-players-wrapper {
+  position: sticky;
+  top: 5rem;
+}
+.sidebar .sidebar-players-wrapper .sidebar-player {
+  box-shadow: -0.1rem 0.1rem 0.5rem 0.1rem rgba(0, 0, 0, 0.123);
+  display: flex;
+  flex-direction: row;
+  padding: 0.8rem 1.3rem;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.304);
+  font-size: 1.5rem;
+  position: relative;
+  overflow-y: hidden;
+}
+.sidebar .sidebar-players-wrapper .sidebar-player:not(:last-of-type) {
+  margin-bottom: 1rem;
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-color {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0.3rem;
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-color[data-player-index="1"] {
+  background-color: rgb(255, 105, 105);
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-color[data-player-index="2"] {
+  background-color: rgb(91, 147, 255);
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state {
+  width: 1.5rem;
+  text-align: center;
+  font-weight: 800;
+  margin-left: auto;
+  padding-left: 1rem;
+  user-select: none;
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state .won {
+  color: greenyellow;
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state .lost {
+  color: rgb(255, 175, 175);
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state .draw {
+  color: gray;
+}
+.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-title {
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-title {
+    transition: 0.2s;
+  }
+  .sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-title:hover {
+    color: rgb(207, 207, 207);
+  }
+}

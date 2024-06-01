@@ -1,0 +1,231 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
+  color: white;
+}
+.info .info-label {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+.info .info-fight-list {
+  display: flex;
+  flex-direction: column;
+}
+.info .info-fight-list > *:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+.info .info-fight {
+  padding: 1rem 1.8rem;
+  background-color: rgb(37, 44, 73);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+}
+.info .info-fight .info-fight-left {
+  margin-right: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.info .info-fight .info-fight-left .info-fight-game-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  width: 2rem;
+  user-select: none;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-won {
+  color: #9de36e;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-lost {
+  color: #e3706e;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-draw {
+  color: #828282;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank {
+  color: #ffffff;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank.rank-first {
+  color: gold;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank.rank-second {
+  color: silver;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank.rank-third {
+  color: rgb(179, 116, 21);
+}
+.info .info-fight .info-fight-center {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.info .info-fight .info-fight-center .info-fight-center-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.info .info-fight .info-fight-center .info-fight-center-top .info-fight-game-title {
+  font-size: 1.5rem;
+  margin-right: 2rem;
+  font-weight: 700;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight .info-fight-center .info-fight-center-top .info-fight-game-title {
+    transition: 0.2s;
+  }
+  .info .info-fight .info-fight-center .info-fight-center-top .info-fight-game-title:hover {
+    color: lightgray;
+  }
+}
+.info .info-fight .info-fight-center .info-fight-center-top .info-fight-datetime {
+  font-size: 0.9rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 0.3rem;
+  background-color: #162942;
+  color: rgb(167, 167, 167);
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom {
+  display: flex;
+  flex-direction: column;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-size: 1.1rem;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-list-won-label {
+  color: rgb(97, 184, 93);
+  font-weight: 800;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-list-lost-label {
+  color: rgb(239, 137, 137);
+  font-weight: 800;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-list-draw-label {
+  color: rgb(169, 169, 169);
+  font-weight: 800;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list:not(:last-of-type) {
+  margin-bottom: 0.3rem;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player, .info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank {
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player, .info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank {
+    transition: 0.2s;
+  }
+  .info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player:hover, .info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank:hover {
+    color: lightgray;
+  }
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank {
+  color: white;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank .info-fight-player-rank {
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank.rank-first .info-fight-player-rank {
+  color: gold;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank.rank-second .info-fight-player-rank {
+  color: silver;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player-with-rank.rank-third .info-fight-player-rank {
+  color: rgb(179, 116, 21);
+}
+.info .info-fight .info-fight-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+}
+.info .info-fight .info-fight-right .info-fight-right-view {
+  font-size: 1.3rem;
+  color: lightgray;
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 1rem 0.5rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight .info-fight-right .info-fight-right-view {
+    transition: 0.2s;
+  }
+  .info .info-fight .info-fight-right .info-fight-right-view:hover {
+    color: rgb(177, 177, 177);
+  }
+}
+.info .game-docs {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+.info .game-docs code {
+  background-color: #000215;
+  border-radius: 0.5rem;
+}
+.info .game-template-list-label {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+.info .game-template-list {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.info .game-template-list a {
+  text-decoration: none;
+  color: white;
+}
+.info .game-template-list .game-template {
+  margin-bottom: 1rem;
+  background: #3373b7;
+  padding: 1.2rem 1.8rem;
+  border-radius: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .game-template-list .game-template {
+    transition: 0.2s;
+  }
+  .info .game-template-list .game-template:hover {
+    background-color: #215082;
+  }
+}
+.info .game-template-list .game-template .game-template-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.info .game-template-list .game-template .game-template-description {
+  font-size: 1.1rem;
+  overflow-y: hidden;
+}
+
+.sidebar .btn-view-games {
+  background-color: rgb(29, 157, 23);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-view-games {
+    transition: 0.2s;
+  }
+  .sidebar .btn-view-games:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}

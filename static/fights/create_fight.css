@@ -1,0 +1,155 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
+  color: white;
+}
+.info .info-cannot-attend-fight-text {
+  font-size: 1.5rem;
+}
+.info .info-label {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+.info .info-label .info-label-game-title {
+  font-weight: 800;
+}
+.info .info-fight-form .errorlist {
+  color: rgb(222, 125, 125);
+}
+.info .info-fight-form .info-fight-form-is-public {
+  display: flex;
+  align-items: center;
+  margin-top: 5rem;
+  font-size: 1.3rem;
+}
+.info .info-fight-form .info-fight-form-is-public label {
+  margin-left: 0.5rem;
+}
+.info .info-fight-form .info-fight-form-label {
+  font-size: 1.7rem;
+  margin-bottom: 0.5rem;
+}
+.info .info-fight-form .info-fight-form-label:not(:first-of-type) {
+  margin-top: 5rem;
+}
+.info .info-fight-form .info-fight-form-players {
+  display: flex;
+  flex-direction: column;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-search-errors {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: rgb(222, 125, 125);
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-top .info-fight-form-players-search-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.8rem;
+  border-radius: 0.4rem;
+  height: 3rem;
+  box-sizing: border-box;
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  background-color: #213a5b;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-top .info-fight-form-players-search-wrapper .info-fight-form-players-at-label {
+  margin-right: 0.7rem;
+  font-size: 1.5rem;
+  user-select: none;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-top .info-fight-form-players-search-wrapper .info-fight-form-players-search {
+  color: white;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  height: 100%;
+  box-sizing: border-box;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-top .info-fight-form-players-add-btn {
+  height: 3rem;
+  margin-left: 1rem;
+  padding: 0.6rem 0.8rem;
+  background-color: rgb(29, 157, 23);
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  border-radius: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  box-sizing: border-box;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight-form .info-fight-form-players .info-fight-form-players-top .info-fight-form-players-add-btn {
+    transition: 0.2s;
+  }
+  .info .info-fight-form .info-fight-form-players .info-fight-form-players-top .info-fight-form-players-add-btn:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-bottom .info-fight-form-players-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-bottom .info-fight-form-players-list .info-fight-form-player {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.6rem;
+  background-color: rgb(47, 58, 130);
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  color: white;
+  border-radius: 0.4rem;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-bottom .info-fight-form-players-list .info-fight-form-player:not(:last-of-type) {
+  margin-right: 1rem;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-bottom .info-fight-form-players-list .info-fight-form-player .info-fight-form-player-delete {
+  margin-right: 0.5rem;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+}
+.info .info-fight-form .info-fight-form-players .info-fight-form-players-bottom .info-fight-form-players-list .info-fight-form-player .info-fight-form-player-username {
+  font-size: 1.2rem;
+}
+.info .info-fight-form .info-fight-form-code-select .info-fight-form-code-select-label {
+  font-size: 1.1rem;
+}
+.info .info-fight-form .info-fight-form-code-select .info-fight-form-code-select-upload {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.sidebar .btn-send-invitations {
+  background-color: rgb(74, 74, 74);
+  cursor: initial;
+}
+.sidebar .btn-send-invitations.enabled {
+  background-color: rgb(29, 157, 23);
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-send-invitations.enabled {
+    transition: 0.2s;
+  }
+  .sidebar .btn-send-invitations.enabled:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}

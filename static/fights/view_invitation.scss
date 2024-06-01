@@ -1,0 +1,170 @@
+.info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex-grow: 1;
+
+    color: white;
+
+    .info-cannot-attend-fight-text {
+        font-size: 1.5rem;
+    }
+
+    .info-label {
+        font-size: 2rem;
+        // font-weight: 600;
+
+        margin-bottom: .5rem;
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+
+        .info-label-host-username {
+            font-weight: 800;
+
+            user-select: none;
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    color: lightgray;
+                }
+            }
+        }
+
+        .info-label-game-title {
+            font-weight: 800;
+
+            user-select: none;
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    color: lightgray;
+                }
+            }
+        }
+
+        .info-label-is-public {
+            padding: .2rem .3rem;
+            background:rgb(47, 58, 130);
+            border-radius: .4rem;
+
+            font-size: 1.2rem;
+
+            margin-left: 1rem;
+        }
+    }
+
+    .info-datetime {
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        color: rgb(130, 130, 130);
+    }
+
+    .info-invitation-players {
+        .info-pending-fight-player {
+            user-select: none;
+            cursor: pointer;
+
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    color: lightgray;
+                }
+            }
+        }
+
+        .info-pending-fight-player-list {
+            display: flex;
+            flex-direction: row;
+
+            flex-wrap: wrap;
+
+            font-size: 1.2rem;
+
+            .label-accepted {
+                color:rgb(91, 216, 84);
+                font-weight: 800;
+                user-select: none;
+            }
+
+            .label-pending {
+                color:rgb(216, 214, 84);
+                font-weight: 800;
+                user-select: none;
+            }
+        }
+    }
+
+    .info-fight-form {
+        .errorlist {
+            color: rgb(222, 125, 125);
+        }
+
+        .info-fight-form-label {
+            font-size: 1.7rem;
+            margin-bottom: .5rem;
+            margin-top: 5rem;
+        }
+
+        .info-fight-form-code-select {
+            .info-fight-form-code-select-label {
+                font-size: 1.1rem;
+            }
+
+            .info-fight-form-code-select-upload {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+                margin-top: 1rem;
+            }
+        }
+    }
+
+    .info-text {
+        font-size: 1.3rem;
+        margin-top: 5rem;
+    }
+}
+
+.sidebar {
+    .btn-attend-fight {
+        background-color: rgb(74, 74, 74);
+        cursor: initial;
+        
+        &.enabled {
+            background-color: rgb(29, 157, 23);
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    background-color: rgb(16, 128, 10);
+                }
+            }
+        }
+    }
+
+    .btn-dismiss-invitation, .btn-cancel-attendance {
+        background-color: #e3706e;
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                background-color: #c8413f;
+            }
+        }
+    }
+}

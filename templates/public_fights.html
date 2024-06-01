@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'fights/public_fights.css' %}">
+{% endblock header %}
+
+{% block content %}
+<div class="info">
+    <div class="info-label">Public Fights</div>
+    <div class="info-fight-list">
+        {% for fight in fights_list %}
+        <div class="info-fight">
+            <div class="info-fight-center">
+                <div class="info-fight-center-top">
+                    <div class="info-fight-game-title">{{ fight.game.title }}</div>
+                    <div class="info-fight-datetime" title="{{ fight.finished_at }} UTC">{{ fight.finished_at|timesince }} ago</div>
+                </div>
+                <div class="info-fight-center-bottom">
+                    {% if fight.game.conclusion_system == ConclusionSystems.VICTORY_DRAW %}
+                        {% if fight.winners %}
+                        <div class="info-fight-player-list">
+                            <div class="info-fight-player-list-won-label">Won:&nbsp;</div>
+                            {% for username in fight.winners %}
+                            <span class="info-fight-player">@{{ username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="info-fight-player-list">
+                            <div class="info-fight-player-list-lost-label">Lost:&nbsp;</div>
+                            {% for username in fight.losers %}
+                            <span class="info-fight-player">@{{ username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="info-fight-player-list">
+                            <div class="info-fight-player-list-draw-label">Draw:&nbsp;</div>
+                            {% for playerfight in fight.playerfight_set.all %}
+                            <span class="info-fight-player">@{{ playerfight.player.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% elif fight.game.conclusion_system == ConclusionSystems.RANK_BASED %}
+                    <div class="info-fight-player-list">
+                        {% for pf in fight.playerfights %}
+                        <span class="info-fight-player-with-rank{% if pf.won_or_rank == 1 %} rank-first{% elif pf.won_or_rank == 2 %} rank-second{% else %} rank-third{% endif %}"><span class="info-fight-player-rank">{{ pf.won_or_rank }}</span> @{{ pf.player.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-fight-right">
+                <a class="info-fight-right-view" href="{{ fight.get_absolute_url }}">VIEW</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="sidebar">
+    <div class="sidebar-buttons-wrapper">
+        <a class="sidebar-button btn-view-games">View Games</a>
+    </div>
+</div>
+{% endblock content %}
+
