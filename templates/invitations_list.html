@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'fights/invitations_list.css' %}">
+{% endblock header %}
+
+{% block content %}
+<div class="info">
+    {% if invitations %}
+    <div class="info-label">Invitations</div>
+    {% endif %}
+    {% for invitation in invitations %}
+    <div class="info-pending-fight">
+        <div class="info-pending-fight-left">
+            <div class="info-pending-fight-top">
+                <div class="info-pending-fight-invite-title"><span class="label-game-title">{{ invitation.hosting.fight.game.title }}</span> by <span class="label-host">@{{ invitation.hosting.host.username }}</span></div>
+                <div class="info-pending-fight-datetime" title="{{ invitation.hosting.fight.created_at }} UTC">{{ invitation.hosting.fight.created_at|timesince }} ago</div>
+            </div>
+            <div class="info-pending-fight-bottom">
+                {% if invitation.hosting.accepted_invitations %}
+                <div class="info-pending-fight-player-list">
+                    <span class="label-accepted">Accepted:&nbsp;&nbsp;&nbsp;</span>
+                    {% for invitation in invitation.hosting.accepted_invitations %}
+                    <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="info-pending-fight-player-list">
+                    <span class="label-pending">Pending:&nbsp;&nbsp;&nbsp;</span>
+                    {% for invitation in invitation.hosting.pending_invitations %}
+                    <span class="info-pending-fight-player">@{{ invitation.target.username }}</span>{% if not forloop.last %},&nbsp;{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="info-pending-fight-right">
+            <a href="{{ invitation.get_absolute_url }}" class="info-pending-fight-button info-pending-fight-view">VIEW</a>
+            <div class="info-pending-fight-button info-pending-fight-dismiss post-confirm-dialog-button" data-post-url="{% url 'api_dismiss_invitation' invitation.uuid.hex %}" data-dialog-title="Dismiss the invitation?">DISMISS</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="sidebar">
+    <div class="sidebar-buttons-wrapper">
+        <div class="sidebar-button btn-view-games">View Games</div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    var csrf_token = "{{ csrf_token }}";
+</script>
+<script src="{% static 'fights/dashboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,395 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
+  color: white;
+}
+.info .info-view-all-fights {
+  text-decoration: none;
+  color: rgb(188, 199, 255);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-view-all-fights {
+    transition: 0.2s;
+  }
+  .info .info-view-all-fights:hover {
+    color: rgb(121, 143, 255);
+  }
+}
+.info > *:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+.info .info-label {
+  font-size: 2rem;
+}
+.info .info-label:not(:first-of-type) {
+  margin-top: 1.5rem;
+}
+.info .info-invited-list {
+  display: flex;
+  flex-direction: column;
+}
+.info .info-invited-list > *:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+.info .info-invited-list .info-invited {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.8rem;
+  background-color: rgb(37, 44, 73);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  border-radius: 10px;
+}
+.info .info-pending-fight {
+  display: flex;
+  flex-direction: row;
+  padding: 1.5rem 1.8rem;
+  background-color: rgb(37, 44, 73);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  border-radius: 10px;
+}
+.info .info-pending-fight .info-pending-fight-left {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.info .info-pending-fight .info-pending-fight-right {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-left: 2rem;
+}
+.info .info-pending-fight .info-pending-fight-right .info-pending-fight-button {
+  font-size: 1.3rem;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  cursor: pointer;
+  box-shadow: -0.2rem 0.2rem 0.3rem 0.1rem rgba(0, 0, 0, 0.236);
+  font-weight: 600;
+}
+.info .info-pending-fight .info-pending-fight-right .info-pending-fight-start {
+  background-color: rgb(29, 157, 23);
+  color: white;
+  margin-right: 1rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-pending-fight .info-pending-fight-right .info-pending-fight-start {
+    transition: 0.2s;
+  }
+  .info .info-pending-fight .info-pending-fight-right .info-pending-fight-start:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}
+.info .info-pending-fight .info-pending-fight-right .info-pending-fight-view {
+  background-color: rgb(48, 151, 156);
+  text-decoration: none;
+  color: white;
+  margin-right: 1rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-pending-fight .info-pending-fight-right .info-pending-fight-view {
+    transition: 0.2s;
+  }
+  .info .info-pending-fight .info-pending-fight-right .info-pending-fight-view:hover {
+    background-color: rgb(32, 118, 122);
+  }
+}
+.info .info-pending-fight .info-pending-fight-right .info-pending-fight-view.disabled {
+  background-color: rgb(76, 86, 76);
+  opacity: 0.6;
+}
+.info .info-pending-fight .info-pending-fight-right .info-pending-fight-cancel, .info .info-pending-fight .info-pending-fight-right .info-pending-fight-dismiss {
+  background-color: #e3706e;
+  color: white;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-pending-fight .info-pending-fight-right .info-pending-fight-cancel, .info .info-pending-fight .info-pending-fight-right .info-pending-fight-dismiss {
+    transition: 0.2s;
+  }
+  .info .info-pending-fight .info-pending-fight-right .info-pending-fight-cancel:hover, .info .info-pending-fight .info-pending-fight-right .info-pending-fight-dismiss:hover {
+    background-color: #c8413f;
+  }
+}
+.info .info-pending-fight .info-pending-fight-top {
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title {
+  font-weight: 100;
+  word-spacing: 0.5rem;
+}
+.info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title .label-host {
+  font-weight: 700;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title .label-host {
+    transition: 0.2s;
+  }
+  .info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title .label-host:hover {
+    color: lightgray;
+  }
+}
+.info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title .label-game-title {
+  font-weight: 700;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title .label-game-title {
+    transition: 0.2s;
+  }
+  .info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title .label-game-title:hover {
+    color: lightgray;
+  }
+}
+.info .info-pending-fight .info-pending-fight-top .info-pending-fight-game-title, .info .info-pending-fight .info-pending-fight-top .info-pending-fight-invite-title {
+  font-size: 1.5rem;
+  margin-right: 2rem;
+}
+.info .info-pending-fight .info-pending-fight-top .info-pending-fight-game-title {
+  font-weight: 700;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-pending-fight .info-pending-fight-top .info-pending-fight-game-title {
+    transition: 0.2s;
+  }
+  .info .info-pending-fight .info-pending-fight-top .info-pending-fight-game-title:hover {
+    color: lightgray;
+  }
+}
+.info .info-pending-fight .info-pending-fight-top .info-pending-fight-datetime {
+  font-size: 0.9rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 0.3rem;
+  background-color: #162942;
+  color: rgb(167, 167, 167);
+}
+.info .info-pending-fight .info-pending-fight-bottom > :not(:last-child) {
+  margin-bottom: 0.2rem;
+}
+.info .info-pending-fight .info-pending-fight-bottom .info-pending-fight-host {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.info .info-pending-fight .info-pending-fight-bottom .info-pending-fight-player {
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-pending-fight .info-pending-fight-bottom .info-pending-fight-player {
+    transition: 0.2s;
+  }
+  .info .info-pending-fight .info-pending-fight-bottom .info-pending-fight-player:hover {
+    color: lightgray;
+  }
+}
+.info .info-pending-fight .info-pending-fight-bottom .info-pending-fight-player-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-size: 1.2rem;
+}
+.info .info-pending-fight .info-pending-fight-bottom .info-pending-fight-player-list .label-accepted {
+  color: rgb(91, 216, 84);
+  font-weight: 800;
+  user-select: none;
+}
+.info .info-pending-fight .info-pending-fight-bottom .info-pending-fight-player-list .label-pending {
+  color: rgb(216, 214, 84);
+  font-weight: 800;
+  user-select: none;
+}
+.info .info-fight-list {
+  display: flex;
+  flex-direction: column;
+}
+.info .info-fight-list > *:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+.info .info-fight.info-ongoing-fight {
+  background-color: rgb(26, 129, 47);
+}
+.info .info-fight.info-ongoing-fight .info-fight-datetime {
+  background-color: #1b5f2f !important;
+  color: rgb(240, 240, 240) !important;
+}
+.info .info-fight.info-ongoing-fight .info-fight-right-view {
+  color: rgb(240, 240, 240) !important;
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight.info-ongoing-fight .info-fight-right-view {
+    transition: 0.2s;
+  }
+  .info .info-fight.info-ongoing-fight .info-fight-right-view:hover {
+    color: lightgray !important;
+  }
+}
+.info .info-fight.info-pending-current-fight {
+  background-color: rgb(170, 151, 0);
+}
+.info .info-fight.info-pending-current-fight .info-fight-datetime {
+  background-color: #886d00 !important;
+  color: white !important;
+}
+.info .info-fight.info-pending-current-fight .info-fight-right-view {
+  color: rgb(240, 240, 240) !important;
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight.info-pending-current-fight .info-fight-right-view {
+    transition: 0.2s;
+  }
+  .info .info-fight.info-pending-current-fight .info-fight-right-view:hover {
+    color: lightgray !important;
+  }
+}
+.info .info-fight {
+  padding: 1rem 1.8rem;
+  background-color: rgb(37, 44, 73);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+}
+.info .info-fight .info-fight-left {
+  margin-right: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.info .info-fight .info-fight-left .info-fight-game-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  width: 2rem;
+  user-select: none;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-won {
+  color: #9de36e;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-lost {
+  color: #e3706e;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-draw {
+  color: #828282;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank {
+  color: #ffffff;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank.rank-first {
+  color: gold;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank.rank-second {
+  color: silver;
+}
+.info .info-fight .info-fight-left .info-fight-game-result .info-fight-game-result-rank.rank-third {
+  color: rgb(179, 116, 21);
+}
+.info .info-fight .info-fight-center {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.info .info-fight .info-fight-center .info-fight-center-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+.info .info-fight .info-fight-center .info-fight-center-top .info-fight-game-title {
+  font-size: 1.5rem;
+  margin-right: 2rem;
+  font-weight: 700;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight .info-fight-center .info-fight-center-top .info-fight-game-title {
+    transition: 0.2s;
+  }
+  .info .info-fight .info-fight-center .info-fight-center-top .info-fight-game-title:hover {
+    color: lightgray;
+  }
+}
+.info .info-fight .info-fight-center .info-fight-center-top .info-fight-datetime {
+  font-size: 0.9rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 0.3rem;
+  background-color: #162942;
+  color: rgb(167, 167, 167);
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom {
+  display: flex;
+  flex-direction: row;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-size: 1.1rem;
+}
+.info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player {
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player {
+    transition: 0.2s;
+  }
+  .info .info-fight .info-fight-center .info-fight-center-bottom .info-fight-player-list .info-fight-player:hover {
+    color: lightgray;
+  }
+}
+.info .info-fight .info-fight-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+}
+.info .info-fight .info-fight-right .info-fight-right-view {
+  font-size: 1.3rem;
+  color: lightgray;
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 1rem 0.5rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-fight .info-fight-right .info-fight-right-view {
+    transition: 0.2s;
+  }
+  .info .info-fight .info-fight-right .info-fight-right-view:hover {
+    color: rgb(177, 177, 177);
+  }
+}
+
+.sidebar .btn-view-games {
+  background-color: rgb(29, 157, 23);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-view-games {
+    transition: 0.2s;
+  }
+  .sidebar .btn-view-games:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}

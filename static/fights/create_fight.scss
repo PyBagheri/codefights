@@ -1,0 +1,239 @@
+$info-item-margin-bottom: 1.5rem;
+
+.info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex-grow: 1;
+
+    color: white;
+
+    .info-cannot-attend-fight-text {
+        font-size: 1.5rem;
+    }
+
+    .info-label {
+        font-size: 2rem;
+        // font-weight: 600;
+
+        margin-bottom: 2rem;
+
+        .info-label-game-title {
+            font-weight: 800;
+        }
+    }
+
+    .info-fight-form {
+        .errorlist {
+            color: rgb(222, 125, 125);
+        }
+
+        .info-fight-form-is-public {
+            display: flex;
+            align-items: center;
+            // justify-content: center;
+
+            margin-top: 5rem;
+            font-size: 1.3rem;
+
+            label {
+                margin-left: .5rem
+            }
+        }
+
+        .info-fight-form-label {
+            font-size: 1.7rem;
+            margin-bottom: .5rem;
+
+            &:not(:first-of-type) {
+                margin-top: 5rem;
+            }
+        }
+
+        .info-fight-form-players {
+            display: flex;
+            flex-direction: column;
+
+            .info-fight-form-players-search-errors {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+                color: rgb(222, 125, 125);
+            }
+
+            .info-fight-form-players-top {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                margin-bottom: 1.5rem;
+
+                .info-fight-form-players-search-wrapper {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+
+                    padding: 0 .8rem;
+    
+                    // font-size: 1.3rem;
+
+                    border-radius: .4rem;
+
+                    height: 3rem;
+
+                    box-sizing: border-box;
+
+                    box-shadow: -.3rem .3rem .5rem .1rem rgba(0, 0, 0, 0.304);
+
+                    background-color: #213a5b;
+
+                    .info-fight-form-players-at-label {
+                        margin-right: .7rem;
+                        font-size: 1.5rem;
+
+                        user-select: none;
+                    }
+    
+                    .info-fight-form-players-search {
+                        color: white;
+                        border: none;
+
+                        background: none;
+    
+                        // padding: .6rem .8rem;
+    
+                        font-size: 1.3rem;
+    
+                        // border-radius: .4rem;
+    
+                        height: 100%;
+    
+                        // box-shadow: -.3rem .3rem .5rem .1rem rgba(0, 0, 0, 0.304);
+    
+                        box-sizing: border-box;
+                    }
+                }
+
+                .info-fight-form-players-add-btn {
+                    height: 3rem;
+
+                    margin-left: 1rem;
+
+                    padding: .6rem .8rem;
+
+                                        // background-color: rgb(37, 44, 73);
+                    background-color: rgb(29, 157, 23);
+
+                    box-shadow: -.3rem .3rem .5rem .1rem rgba(0, 0, 0, 0.304);
+
+                    border-radius: .3rem;
+
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    
+                    // font-size: 1.5rem;
+
+                    // position: sticky;
+                    // top: 3rem;
+
+                    user-select: none;
+                    cursor: pointer;
+
+                    font-size: 1.3rem;
+
+                    box-sizing: border-box;
+
+                    @media (hover: hover) and (pointer: fine) {
+                        transition: .2s;
+
+                        &:hover {
+                            background-color: rgb(16, 128, 10);
+                        }
+                    }
+
+                    // background: rgb(29, 157, 23);
+                }
+            }
+
+            .info-fight-form-players-bottom {
+                .info-fight-form-players-list {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+
+                    .info-fight-form-player {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: center;
+
+                        padding: .4rem .6rem;
+
+                        background-color: rgb(47, 58, 130);
+
+                        box-shadow: -.3rem .3rem .5rem .1rem rgba(0, 0, 0, 0.304);
+
+                        color: white;
+
+                        border-radius: .4rem;
+
+                        &:not(:last-of-type) {
+                            margin-right: 1rem;
+                        }
+
+                        .info-fight-form-player-delete {
+                            margin-right: .5rem;
+                            font-size: 1.6rem;
+
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            user-select: none;
+                            cursor: pointer;
+                        }
+                        
+                        .info-fight-form-player-username {
+                            font-size: 1.2rem;
+                        }
+                    }
+                }
+            }
+        }
+
+        .info-fight-form-code-select {
+            .info-fight-form-code-select-label {
+                font-size: 1.1rem;
+            }
+
+            .info-fight-form-code-select-upload {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+                margin-top: 1rem;
+            }
+        }
+    }
+}
+
+.sidebar {
+    .btn-send-invitations {
+        background-color: rgb(74, 74, 74);
+        cursor: initial;
+        
+        &.enabled {
+            background-color: rgb(29, 157, 23);
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    background-color: rgb(16, 128, 10);
+                }
+            }
+        }
+    }
+}

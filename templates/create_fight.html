@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'fights/create_fight.css' %}">
+{% endblock header %}
+
+{% block content %}
+{% if attended_fights_full %}
+<div class="info">
+    <div class="info-cannot-attend-fight-text">You have already attended to another fight. You can create fights after your current fight's simulation is over, or if you cancel it.</div>
+</div>
+{% else %}
+<div class="info">
+    <div class="info-label">Create a new fight: <span class="info-label-game-title">{{ game_info.title }}</span></div>
+    <form method="post" class="info-fight-form-element" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input class="info-fight-form-players-list-input" name="usernames_list" hidden />
+        <div class="info-fight-form">
+            <div class="info-fight-form-label">Players ({% if game_info.min_players == game_info.max_players %}exactly {{ game_info.min_players }}{% else %}{{ game_info.min_players }} to {{ game_info.max_players }}{% endif %}):</div>
+            <div class="info-fight-form-players">
+                <div class="info-fight-form-players-search-errors"></div>
+                <div class="info-fight-form-players-top">
+                    <div class="info-fight-form-players-search-wrapper">
+                    <div class="info-fight-form-players-at-label">@</div>
+                        <input class="info-fight-form-players-search" placeholder="username" />
+                    </div>
+                    <div class="info-fight-form-players-add-btn">Add</div>
+                </div>
+                <div class="info-fight-form-players-bottom">
+                    <div class="info-fight-form-players-list"></div>
+                </div>
+            </div>
+
+            {% comment %} TO BE DEVELOPED LATER {% endcomment %}
+            {% comment %} <div class="info-fight-form-game-settings"></div> {% endcomment %}
+
+            <div class="info-fight-form-label">Code:</div>
+            {{ form.code.errors }}
+            <div class="info-fight-form-code-select">
+                {% comment %} TO BE DEVELOPED LATER {% endcomment %}
+                {% comment %} <div class="info-fight-form-code-select-label">Upload a code file or select from your presets.</div> {% endcomment %}
+                
+                <input type="file" class="info-fight-form-code-select-upload" name="code" />
+            </div>
+
+            <div class="info-fight-form-is-public">
+                <input type="checkbox" id="is-public" name="is_public" />
+                <label for="is-public">Make the fight public?</label>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="sidebar">
+    <div class="sidebar-buttons-wrapper">
+        <div class="sidebar-button btn-send-invitations">Send Invitations</div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    var csrf_token = "{{ csrf_token }}";
+
+    var min_players = {{ game_info.min_players }};
+    var max_players = {{ game_info.max_players }};
+    {% if form.usernames_list.value %}
+    var players_list = JSON.parse("{{ form.usernames_list.value|escapejs }}");
+    {% endif %}
+</script>
+<script src="{% static 'fights/create_fight.js' %}"></script>
+{% endblock%}

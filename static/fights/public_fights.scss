@@ -1,0 +1,344 @@
+$info-item-margin-bottom: 1.5rem;
+
+.info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex-grow: 1;
+
+    color: white;
+
+    .info-label {
+        font-size: 2rem;
+        // font-weight: 600;
+
+        margin-bottom: 2rem;
+    }
+
+    .info-fight-list {
+        display: flex;
+        flex-direction: column;
+
+        > *:not(:last-child) {
+            margin-bottom: $info-item-margin-bottom;
+        }
+    }
+
+    .info-fight {
+        // padding: 1.5rem 1.8rem;
+        padding: 1rem 1.8rem;
+
+        background-color: rgb(37, 44, 73);
+
+        box-shadow: -.3rem .3rem 1rem .2rem rgba(0, 0, 0, 0.471);
+
+        border-radius: 10px;
+
+        display: flex;
+        flex-direction: row;
+
+        box-sizing: border-box;
+
+        // user-select: none;
+        // cursor: pointer;
+
+        .info-fight-left {
+            margin-right: 3rem;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .info-fight-game-result {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                font-size: 2.5rem;
+                font-weight: 800;
+
+                width: 2rem;
+
+                user-select: none;
+
+                .info-fight-game-result-won {
+                    color: #9de36e;
+                }
+
+                .info-fight-game-result-lost {
+                    color: #e3706e;
+                }
+
+                .info-fight-game-result-draw {
+                    color: #828282;
+                }
+
+                .info-fight-game-result-rank {
+                    color: #ffffff;
+
+                    &.rank-first {
+                        color: gold;
+                    }
+                    
+                    &.rank-second {
+                        color: silver;
+                    }
+
+                    &.rank-third {
+                        color: rgb(179, 116, 21);
+                    }
+                }
+            }
+        }
+
+        .info-fight-center {
+            flex-grow: 1;
+
+            display: flex;
+            flex-direction: column;
+
+            .info-fight-center-top {
+                display: flex;
+                flex-direction: row;
+                
+                align-items: center;
+
+                margin-bottom: 1rem;
+
+                .info-fight-game-title {
+                    font-size: 1.5rem;
+                    margin-right: 2rem;
+
+                    font-weight: 700;
+
+                    user-select: none;
+                    cursor: pointer;
+                    
+                    @media (hover: hover) and (pointer: fine) {
+                        transition: .2s;
+            
+                        &:hover {
+                            color: lightgray;
+                        }
+                    }
+                }
+
+                .info-fight-datetime {
+                    font-size: .9rem;
+                    padding: .2rem .3rem;
+                    border-radius: .3rem;
+                    background-color: #162942;
+
+                    // background: gray;
+
+                    // padding: .3rem;
+                    // margin-right: 2rem;
+
+                    color: rgb(167, 167, 167);
+                }
+            }
+
+            .info-fight-center-bottom {
+                display: flex;
+                flex-direction: column;
+
+                .info-fight-player-list {
+                    .info-fight-player-list-won-label {
+                        color:rgb(97, 184, 93);
+                        font-weight: 800;
+                    }
+
+                    .info-fight-player-list-lost-label {
+                        color: rgb(239, 137, 137);
+                        font-weight: 800;
+                    }
+
+                    .info-fight-player-list-draw-label {
+                        color: rgb(169, 169, 169);
+                        font-weight: 800;
+                    }
+
+                    &:not(:last-of-type) {
+                        margin-bottom: .3rem;
+                    }
+
+                    display: flex;
+                    flex-direction: row;
+
+                    flex-wrap: wrap;
+
+                    // > :not(:last-child) {
+                    //     margin-right: .5rem;
+                    // }
+
+                    font-size: 1.1rem;
+
+                    .info-fight-player, .info-fight-player-with-rank {
+                        user-select: none;
+                        cursor: pointer;
+
+
+                        @media (hover: hover) and (pointer: fine) {
+                            transition: .2s;
+                
+                            &:hover {
+                                color: lightgray;
+                            }
+                        }
+                    }
+
+                    .info-fight-player-with-rank {
+                        // padding: .2rem .4rem;
+                        // background-color: rgb(24, 36, 83);
+                        color: white;
+
+                        .info-fight-player-rank {
+                            font-weight: 800;
+                            font-size: 1.2rem;
+                        }
+
+                        &.rank-first .info-fight-player-rank {
+                            color: gold;
+                            // color: black;
+                        }
+                        
+                        &.rank-second .info-fight-player-rank {
+                            color: silver;
+                            // color: black;
+
+                        }
+    
+                        &.rank-third .info-fight-player-rank {
+                            color: rgb(179, 116, 21);
+                        }
+                    }
+                }
+            }
+        }
+
+        .info-fight-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-left: 1rem;
+
+            .info-fight-right-view {
+                font-size: 1.3rem;
+                color: lightgray;
+                // font-weight: 800;
+                user-select: none;
+                cursor: pointer;
+
+                text-decoration: none;
+
+                padding: 1rem .5rem;
+
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        color: rgb(177, 177, 177);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+    .game-docs {
+        font-size: 1.2rem;
+
+        margin-bottom: 2rem;
+
+        code {
+            background-color: #000215;
+            border-radius: .5rem;
+        }
+    }
+
+    .game-template-list-label {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .game-template-list {
+        display: flex;
+        flex-direction: column;
+
+        flex-wrap: wrap;
+
+        // > :not(:last-child) {
+        //     margin-right: 1rem;
+        // }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .game-template {
+            margin-bottom: 1rem;
+
+            background: #3373b7;
+
+            padding: 1.2rem 1.8rem;
+
+            border-radius: .3rem;
+
+            // max-width: 15rem;
+            // min-width: 15rem;
+
+            // min-height: 7rem;
+            // max-height: 7rem;
+
+            display: flex;
+            flex-direction: column;
+
+            user-select: none;
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    background-color: #215082;
+                }
+            }
+
+            .game-template-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: .2rem;
+            }
+
+            .game-template-description {
+                font-size: 1.1rem;
+                overflow-y: hidden;
+            }
+        }
+    }
+}
+
+.sidebar {
+    .btn-view-games {
+        background-color: rgb(29, 157, 23);
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                background-color: rgb(16, 128, 10);
+            }
+        }
+    }
+}

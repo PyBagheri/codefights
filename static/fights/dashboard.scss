@@ -1,0 +1,548 @@
+$info-item-margin-bottom: 1.5rem;
+
+
+.info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex-grow: 1;
+
+    color: white;
+
+    .info-view-all-fights {
+        text-decoration: none;
+        color: rgb(188, 199, 255);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-top: 1rem;
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                color: rgb(121, 143, 255);
+            }
+        }
+    }
+
+    > *:not(:last-child) {
+        margin-bottom: $info-item-margin-bottom;
+    }
+
+    .info-label {
+        font-size: 2rem;
+
+        &:not(:first-of-type) {
+            margin-top: 1.5rem;
+        }
+    }
+
+    .info-invited-list {
+        display: flex;
+        flex-direction: column;
+
+        > *:not(:last-child) {
+            margin-bottom: $info-item-margin-bottom;
+        }
+
+        .info-invited {
+            display: flex;
+            flex-direction: column;
+
+            padding: 1.5rem 1.8rem;
+
+            background-color: rgb(37, 44, 73);
+
+            box-shadow: -.3rem .3rem 1rem .2rem rgba(0, 0, 0, 0.471);
+
+            // border: black solid 1px;
+
+            border-radius: 10px;
+        }
+    }
+
+    .info-pending-fight {
+        display: flex;
+        flex-direction: row;
+
+        // padding: 1.5rem 1.8rem;
+        padding: 1.5rem 1.8rem;
+
+        background-color: rgb(37, 44, 73);
+
+        box-shadow: -.3rem .3rem 1rem .2rem rgba(0, 0, 0, 0.471);
+
+        border-radius: 10px;
+
+
+        .info-pending-fight-left {
+            display: flex;
+            flex-direction: column;
+
+            flex-grow: 1;
+        }
+
+        .info-pending-fight-right {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            // justify-content: center;
+
+            margin-left: 2rem;
+
+            .info-pending-fight-button {
+                // border-width: 1px;
+                // border-style: solid;
+
+                font-size: 1.3rem;
+
+                padding: .6rem .8rem;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                border-radius: .5rem;
+
+                user-select: none;
+                cursor: pointer;
+
+                box-shadow: -.2rem .2rem .3rem .1rem rgba(0, 0, 0, 0.236);
+
+                font-weight: 600;
+            }
+
+            .info-pending-fight-start {
+                // border-color: greenyellow;
+                background-color: rgb(29, 157, 23);
+                // color: greenyellow;
+
+                color: white;
+
+                margin-right: 1rem;
+
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        background-color: rgb(16, 128, 10);
+                    }
+                }
+            }
+
+            .info-pending-fight-view {
+                // border-color: greenyellow;
+                background-color: rgb(48, 151, 156);
+                // color: greenyellow;
+
+                text-decoration: none;
+                color: white;
+
+                margin-right: 1rem;
+
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        background-color: rgb(32, 118, 122);
+                    }
+                }
+            }
+
+            .info-pending-fight-view.disabled {
+                background-color: rgb(76, 86, 76);
+                opacity: .6;
+            }
+
+            .info-pending-fight-cancel, .info-pending-fight-dismiss {
+                background-color: #e3706e;
+                // color: #e3706e;
+                color: white;
+
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        background-color: #c8413f;
+                    }
+                }
+            }
+        }
+
+        .info-pending-fight-top {
+            margin-bottom: 1rem;
+
+            flex-wrap: wrap;
+
+            display: flex;
+            flex-direction: row;
+
+            align-items: center;
+
+            .info-pending-fight-invite-title {
+                font-weight: 100;
+                word-spacing: .5rem;
+
+                .label-host {
+                    font-weight: 700;
+
+                    user-select: none;
+                    cursor: pointer;
+    
+    
+                    @media (hover: hover) and (pointer: fine) {
+                        transition: .2s;
+            
+                        &:hover {
+                            color: lightgray;
+                        }
+                    }
+                }
+
+                .label-game-title {
+                    font-weight: 700;
+
+                    user-select: none;
+                    cursor: pointer;
+                    
+                    @media (hover: hover) and (pointer: fine) {
+                        transition: .2s;
+            
+                        &:hover {
+                            color: lightgray;
+                        }
+                    }
+                }
+            }
+
+            .info-pending-fight-game-title, .info-pending-fight-invite-title {
+                font-size: 1.5rem;
+                margin-right: 2rem;
+            }
+            
+            .info-pending-fight-game-title {
+                font-weight: 700;
+
+                user-select: none;
+                cursor: pointer;
+                
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        color: lightgray;
+                    }
+                }
+            }
+
+            .info-pending-fight-datetime {
+                font-size: .9rem;
+                padding: .2rem .3rem;
+                border-radius: .3rem;
+                background-color: #162942;
+
+                // background: gray;
+
+                // padding: .3rem;
+                // margin-right: 2rem;
+
+                color: rgb(167, 167, 167);
+            }
+        }
+
+        .info-pending-fight-bottom {
+            > :not(:last-child) {
+                margin-bottom: .2rem;
+            }
+
+            .info-pending-fight-host {
+                font-size: 1.5rem;
+
+                margin-bottom: 1rem;
+
+                // font-weight: ;
+            }
+
+            // It might not be a child of .info-pending-fight-player-list
+            .info-pending-fight-player {
+                user-select: none;
+                cursor: pointer;
+
+
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        color: lightgray;
+                    }
+                }
+            }
+
+            .info-pending-fight-player-list {
+                display: flex;
+                flex-direction: row;
+
+                flex-wrap: wrap;
+
+                font-size: 1.2rem;
+
+                .label-accepted {
+                    color:rgb(91, 216, 84);
+                    font-weight: 800;
+                    user-select: none;
+                }
+
+                .label-pending {
+                    color:rgb(216, 214, 84);
+                    font-weight: 800;
+                    user-select: none;
+                }
+            }
+        }
+    }
+
+    .info-fight-list {
+        display: flex;
+        flex-direction: column;
+
+        > *:not(:last-child) {
+            margin-bottom: $info-item-margin-bottom;
+        }
+    }
+
+    .info-fight.info-ongoing-fight {
+        background-color: rgb(26, 129, 47);
+
+        .info-fight-datetime {
+            background-color: #1b5f2f !important;
+            color: rgb(240, 240, 240) !important;
+        }
+
+        .info-fight-right-view {
+            color: rgb(240, 240, 240) !important;
+            text-decoration: none;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    color: lightgray !important;
+                }
+            }
+        }
+    }
+
+    .info-fight.info-pending-current-fight {
+        background-color: rgb(170, 151, 0);
+
+        .info-fight-datetime {
+            background-color: #886d00 !important;
+            color: white !important;
+        }
+
+        .info-fight-right-view {
+            color: rgb(240, 240, 240) !important;
+            text-decoration: none;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    color: lightgray !important;
+                }
+            }
+        }
+    }
+
+    .info-fight {
+        // padding: 1.5rem 1.8rem;
+        padding: 1rem 1.8rem;
+
+        background-color: rgb(37, 44, 73);
+
+        box-shadow: -.3rem .3rem 1rem .2rem rgba(0, 0, 0, 0.471);
+
+        border-radius: 10px;
+
+        display: flex;
+        flex-direction: row;
+
+        box-sizing: border-box;
+
+        // user-select: none;
+        // cursor: pointer;
+
+        .info-fight-left {
+            margin-right: 3rem;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .info-fight-game-result {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                font-size: 2.5rem;
+                font-weight: 800;
+
+                width: 2rem;
+
+                user-select: none;
+
+                .info-fight-game-result-won {
+                    color: #9de36e;
+                }
+
+                .info-fight-game-result-lost {
+                    color: #e3706e;
+                }
+
+                .info-fight-game-result-draw {
+                    color: #828282;
+                }
+
+                .info-fight-game-result-rank {
+                    color: #ffffff;
+
+                    &.rank-first {
+                        color: gold;
+                    }
+                    
+                    &.rank-second {
+                        color: silver;
+                    }
+
+                    &.rank-third {
+                        color: rgb(179, 116, 21);
+                    }
+                }
+            }
+        }
+
+        .info-fight-center {
+            flex-grow: 1;
+
+            display: flex;
+            flex-direction: column;
+
+            .info-fight-center-top {
+                display: flex;
+                flex-direction: row;
+                
+                align-items: center;
+
+                margin-bottom: .3rem;
+
+                .info-fight-game-title {
+                    font-size: 1.5rem;
+                    margin-right: 2rem;
+
+                    font-weight: 700;
+
+                    user-select: none;
+                    cursor: pointer;
+                    
+                    @media (hover: hover) and (pointer: fine) {
+                        transition: .2s;
+            
+                        &:hover {
+                            color: lightgray;
+                        }
+                    }
+                }
+
+                .info-fight-datetime {
+                    font-size: .9rem;
+                    padding: .2rem .3rem;
+                    border-radius: .3rem;
+                    background-color: #162942;
+
+                    // background: gray;
+
+                    // padding: .3rem;
+                    // margin-right: 2rem;
+
+                    color: rgb(167, 167, 167);
+                }
+            }
+
+            .info-fight-center-bottom {
+                display: flex;
+                flex-direction: row;
+
+                .info-fight-player-list {
+                    display: flex;
+                    flex-direction: row;
+
+                    flex-wrap: wrap;
+
+                    // > :not(:last-child) {
+                    //     margin-right: .5rem;
+                    // }
+
+                    font-size: 1.1rem;
+
+                    .info-fight-player {
+                        user-select: none;
+                        cursor: pointer;
+
+
+                        @media (hover: hover) and (pointer: fine) {
+                            transition: .2s;
+                
+                            &:hover {
+                                color: lightgray;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .info-fight-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-left: 1rem;
+
+            .info-fight-right-view {
+                font-size: 1.3rem;
+                color: lightgray;
+                // font-weight: 800;
+                user-select: none;
+                cursor: pointer;
+
+                text-decoration: none;
+
+                padding: 1rem .5rem;
+
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        color: rgb(177, 177, 177);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.sidebar {
+    .btn-view-games {
+        background-color: rgb(29, 157, 23);
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                background-color: rgb(16, 128, 10);
+            }
+        }
+    }
+}

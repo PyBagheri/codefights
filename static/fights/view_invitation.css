@@ -1,0 +1,132 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
+  color: white;
+}
+.info .info-cannot-attend-fight-text {
+  font-size: 1.5rem;
+}
+.info .info-label {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.info .info-label .info-label-host-username {
+  font-weight: 800;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-label .info-label-host-username {
+    transition: 0.2s;
+  }
+  .info .info-label .info-label-host-username:hover {
+    color: lightgray;
+  }
+}
+.info .info-label .info-label-game-title {
+  font-weight: 800;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-label .info-label-game-title {
+    transition: 0.2s;
+  }
+  .info .info-label .info-label-game-title:hover {
+    color: lightgray;
+  }
+}
+.info .info-label .info-label-is-public {
+  padding: 0.2rem 0.3rem;
+  background: rgb(47, 58, 130);
+  border-radius: 0.4rem;
+  font-size: 1.2rem;
+  margin-left: 1rem;
+}
+.info .info-datetime {
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: rgb(130, 130, 130);
+}
+.info .info-invitation-players .info-pending-fight-player {
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .info-invitation-players .info-pending-fight-player {
+    transition: 0.2s;
+  }
+  .info .info-invitation-players .info-pending-fight-player:hover {
+    color: lightgray;
+  }
+}
+.info .info-invitation-players .info-pending-fight-player-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-size: 1.2rem;
+}
+.info .info-invitation-players .info-pending-fight-player-list .label-accepted {
+  color: rgb(91, 216, 84);
+  font-weight: 800;
+  user-select: none;
+}
+.info .info-invitation-players .info-pending-fight-player-list .label-pending {
+  color: rgb(216, 214, 84);
+  font-weight: 800;
+  user-select: none;
+}
+.info .info-fight-form .errorlist {
+  color: rgb(222, 125, 125);
+}
+.info .info-fight-form .info-fight-form-label {
+  font-size: 1.7rem;
+  margin-bottom: 0.5rem;
+  margin-top: 5rem;
+}
+.info .info-fight-form .info-fight-form-code-select .info-fight-form-code-select-label {
+  font-size: 1.1rem;
+}
+.info .info-fight-form .info-fight-form-code-select .info-fight-form-code-select-upload {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+.info .info-text {
+  font-size: 1.3rem;
+  margin-top: 5rem;
+}
+
+.sidebar .btn-attend-fight {
+  background-color: rgb(74, 74, 74);
+  cursor: initial;
+}
+.sidebar .btn-attend-fight.enabled {
+  background-color: rgb(29, 157, 23);
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-attend-fight.enabled {
+    transition: 0.2s;
+  }
+  .sidebar .btn-attend-fight.enabled:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}
+.sidebar .btn-dismiss-invitation, .sidebar .btn-cancel-attendance {
+  background-color: #e3706e;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-dismiss-invitation, .sidebar .btn-cancel-attendance {
+    transition: 0.2s;
+  }
+  .sidebar .btn-dismiss-invitation:hover, .sidebar .btn-cancel-attendance:hover {
+    background-color: #c8413f;
+  }
+}

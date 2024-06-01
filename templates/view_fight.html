@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% load game_tags %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'fights/view_fight.css' %}">
+<link rel="stylesheet" href="{% game_static fight.game.name 'css' %}">
+{% endblock header %}
+
+{% block content %}
+<div class="info">
+    <div class="info-fight-canvas">
+        <div class="info-fight-canvas-top">
+            {% game_template fight.game.name %}
+        </div>
+        <div class="info-fight-canvas-bottom">
+            <a class="info-fight-game-title" href="{{ fight.game.get_absolute_url }}">{{ fight.game.title }}</a>
+        </div>
+    </div>
+    {% if explanation %}
+    <div class="info-fight-explanation"><ion-icon name="information-circle"></ion-icon>{{ explanation }}</div>
+    {% endif %}
+
+    <div class="info-fight-datetimes" title="{{ fight.finished_at }} UTC">Simulation finished {{ fight.finished_at|timesince }} ago</div>
+    
+    {% comment %} If the player had participated in the fight {% endcomment %}
+    {% if my_playerfight %}  
+    <div class="info-fight-code-details">
+        <div class="info-fight-code-details-title">Your Code</div>
+        {% if my_playerfight.termination_reason %}
+        <div class="info-fight-code-details-status">
+            <ion-icon name="code-outline"></ion-icon>Your code was terminated{% if show_termination_reason %}:&nbsp;
+            <span class="info-fight-code-details-status-reason">{{ my_playerfight.get_termination_reason_display }}</span>.
+            {% else %}.{% endif %}
+        </div>
+        {% else %}
+        <div class="info-fight-code-details-status"><ion-icon name="code-outline"></ion-icon>Your code finished its execution with no problems.</div>
+        {% endif %}
+        <a class="info-fight-code-details-download" href="{{ my_playerfight.code_file.url }}">DOWNLOAD YOUR CODE</a>
+    </div>
+    {% endif %}
+</div>
+<div class="sidebar">
+    {% comment %} TODO: Showing scores for games that have scoring {% endcomment %}
+    <div class="sidebar-players-wrapper">
+        {% for playerfight in fight.playerfight_set.all %}
+        <div class="sidebar-player">
+            <div class="sidebar-player-color" data-player-index="{{ forloop.counter }}"></div>
+            <div class="sidebar-player-title">@{{ playerfight.player.username }}</div>
+            <div class="sidebar-player-state">
+                {% if playerfight.won_or_rank is None %}
+                <span class="draw">D</span>
+                {% elif fight.game.conclusion_system == ConclusionSystems.VICTORY_DRAW %}
+                    {% if playerfight.won_or_rank == 0 %}
+                    <span class="lost">L</span>
+                    {% else %}
+                    <span class="won">W</span>
+                    {% endif %}
+                {% elif fight.game.conclusion_system == ConclusionSystems.RANK_BASED %}
+                {{ playerfight.won_or_rank }}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% game_static fight.game.name 'js' %}"></script>
+<script>
+    {% if fight.game_settings %}
+    var game_settings = JSON.parse("{{ fight.game_settings|escapejs }}");
+    {% else %}
+    var game_settings = [];
+    {% endif %}
+    {% comment %} var result = "{{ fight.result.data|escapejs }}"; {% endcomment %}
+    var result = "";
+    var flow = JSON.parse("{{ fight.result.data|escapejs }}");
+    window.addEventListener('load', function() {
+        setup(game_settings, result, flow);
+        setTimeout(run_simulation, 1000, 0)
+    });
+</script>
+<script src="{% static 'fights/view_fight.js' %}"></script>
+{% endblock scripts %}
