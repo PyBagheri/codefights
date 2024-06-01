@@ -1,0 +1,32 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
+  color: white;
+}
+.info .guide-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.info .guide-text {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+.info .guide-text code {
+  background-color: #000215;
+  border-radius: 0.5rem;
+}
+
+.sidebar .btn-view-games {
+  background-color: rgb(29, 157, 23);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-view-games {
+    transition: 0.2s;
+  }
+  .sidebar .btn-view-games:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}

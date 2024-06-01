@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'gamespecs/games_list.css' %}">
+{% endblock header %}
+
+{% block content %}
+<div class="games-main">
+    <div class="games-label">Games</div>
+    <div class="games-list">
+        {% for game_info in games_list %}
+        <a href="{{ game_info.get_absolute_url }}">
+            <div class="game-info">
+                <div class="game-info-top">
+                    <div class="game-info-title">{{ game_info.title }}</div>
+                    <div class="game-info-conclusion-system">{{ game_info.get_conclusion_system_display }}</div>
+                </div>
+                <div class="game-info-description">{{ game_info.short_description }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

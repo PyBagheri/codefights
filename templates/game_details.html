@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}...{% endblock title %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="{% static 'gamespecs/game_details.css' %}">
+{% endblock header %}
+
+{% block content %}
+<div class="info">
+    <div class="game-title">{{ game_info.title }}</div>
+    <div class="game-docs">{{ game_info.documentation }}</div>
+
+    <div class="game-template-list-label">Templates</div>
+    <div class="game-template-list">
+        {% for template in templates %}
+        <a href="{{ template.file.url }}">
+        <div class="game-template">
+            <div class="game-template-title"><ion-icon name="document-outline"></ion-icon>{{ template.title }}</div>
+            <div class="game-template-description">{{ template.description }}</div>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+<div class="sidebar">
+    <div class="sidebar-buttons-wrapper">
+        <a class="sidebar-button btn-new-fight" href="{% url 'create_fight' game_info.name %}">New Fight</a>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked-highlight/lib/index.umd.js"></script>
+<script>
+    const {markedHighlight} = globalThis.markedHighlight;
+    var documentation = "{{ game_info.documentation|escapejs }}";
+</script>
+<script src="{% static 'gamespecs/game_details.js' %}"></script>
+{% endblock scripts %}

@@ -1,0 +1,42 @@
+.info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex-grow: 1;
+
+    color: white;
+
+    .guide-title {
+        font-size: 3rem;
+        font-weight: 800;
+
+        margin-bottom: .5rem;
+    }
+
+    .guide-text {
+        font-size: 1.2rem;
+
+        margin-bottom: 2rem;
+
+        code {
+            background-color: #000215;
+            border-radius: .5rem;
+        }
+    }
+}
+
+.sidebar {
+    .btn-view-games {
+        background-color: rgb(29, 157, 23);
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                background-color: rgb(16, 128, 10);
+            }
+        }
+    }
+}

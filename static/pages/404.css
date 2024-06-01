@@ -1,0 +1,16 @@
+.not-found-page {
+  color: white;
+}
+.not-found-page .message {
+  font-size: 2rem;
+}
+.not-found-page .dashboard {
+  text-decoration: none;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  display: block;
+  width: fit-content;
+  padding: 1rem 1.2rem;
+  background-color: #394897;
+  border-radius: 0.5rem;
+}

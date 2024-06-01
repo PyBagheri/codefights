@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'pages/404.css' %}">
+{% endblock header %}
+
+
+{% block content %}
+<div class="not-found-page">
+    <div class="message">The page you request for was not found (404).</div>
+    <a class="dashboard" href="{% url 'dashboard' %}">Back to Dashboard</a>
+</div>
+{% endblock content %}
+

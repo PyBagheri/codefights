@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'pages/500.css' %}">
+{% endblock header %}
+
+
+{% block content %}
+<div class="internal-error-page">
+    <div class="message">There has been an internal server error (500).</div>
+    <a class="dashboard" href="{% url 'dashboard' %}">Back to Dashboard</a>
+</div>
+{% endblock content %}
+
