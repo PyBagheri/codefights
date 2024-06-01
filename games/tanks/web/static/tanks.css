@@ -1,24 +1,25 @@
-.info {
+.game-status {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 40px;
   margin-top: 30px;
 }
-.info .healthes {
+.game-status .healthes {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   flex-grow: 1;
 }
-.info .healthes .health {
+.game-status .healthes .health {
   font-size: 30px;
   min-width: 70px;
   text-align: center;
   transition: 0.5s;
+  font-weight: 700;
 }
-.info .healthes .health-label {
+.game-status .healthes .health-label {
   font-size: 20px;
   margin-right: 20px;
   margin-left: 20px;
@@ -35,7 +36,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid black;
+  border: 1px solid white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,8 +49,8 @@
     transition: 0.2s;
   }
   .control .control-button:hover {
-    background-color: black;
-    color: white;
+    background-color: white;
+    color: black;
   }
 }
 .control .control-button.next, .control .control-button.next10 {
@@ -85,14 +86,14 @@
 .board .board-column {
   display: flex;
   flex-direction: column-reverse;
-  border-right: 1px black solid;
+  border-right: 1px white solid;
   width: min(100%, 60px);
 }
 .board .board-column:first-child {
-  border-left: 1px black solid;
+  border-left: 1px white solid;
 }
 .board .board-column .board-square {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid white;
   max-height: 60px;
   max-width: 60px;
   width: min(100%, 60px);
@@ -105,7 +106,7 @@
   position: relative;
 }
 .board .board-column .board-square:last-child {
-  border-top: 1px solid black;
+  border-top: 1px solid white;
 }
 
 .tank {

@@ -1,7 +1,7 @@
 $square-side-max: 60px;
 
 
-.info {
+.game-status {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,6 +25,8 @@ $square-side-max: 60px;
             text-align: center;
     
             transition: .5s;
+
+            font-weight: 700;
         }
     
         .health-label {
@@ -50,7 +52,7 @@ $square-side-max: 60px;
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        border: 1px solid black;
+        border: 1px solid white;
 
         display: flex;
         align-items: center;
@@ -65,8 +67,8 @@ $square-side-max: 60px;
             transition: .2s;
 
             &:hover {
-                background-color: black;
-                color: white;
+                background-color: white;
+                color: black;
             }
         }
 
@@ -113,20 +115,20 @@ $square-side-max: 60px;
         display: flex;
         flex-direction: column-reverse;  // reverse for the right coordinates
 
-        border-right: 1px black solid;
+        border-right: 1px white solid;
 
         width: min(100%, $square-side-max);
 
         &:first-child {
-            border-left: 1px black solid;
+            border-left: 1px white solid;
         }
         
         .board-square {
             &:last-child {
-                border-top: 1px solid black;
+                border-top: 1px solid white;
             }
 
-            border-bottom: 1px solid black;
+            border-bottom: 1px solid white;
 
             max-height: $square-side-max;
             max-width: $square-side-max;

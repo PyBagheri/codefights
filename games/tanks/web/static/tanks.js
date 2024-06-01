@@ -1,4 +1,4 @@
-var game_body, board, info, control;
+var game_body, board, game_status, control;
 var settings, result, flow;
 var game_ticks, current_tick;
 var current_timeouts = [];
@@ -71,13 +71,21 @@ const HD_MATRIX = {
     "L": { "U": 90, "R": -180, "D": -90, "L": 0 },
 }
 
-const TANK_COLORS = ["#bf3b3b", "darkblue"];
+// const TANK_COLORS = ["#bf3b3b", "darkblue"];  // LIGHT MODE
+const TANK_COLORS = ["rgb(255, 99, 99)", "rgb(91, 147, 255)"];
 
-const PREHIT_BG_COLORS = ["pink", "lightblue"];
-const OVERLAPPING_PREHIT_BG_COLORS = "#e3a0e3";
 
-const HIT_BG_COLORS = ["red", "blue"];
-const OVERLAPPING_HIT_BG_COLORS = "purple";
+// const PREHIT_BG_COLORS = ["pink", "lightblue"];  // LIGHT MODE
+const PREHIT_BG_COLORS = ["#821f30", "#0c5871"];
+
+
+// const OVERLAPPING_PREHIT_BG_COLORS = "#e3a0e3";  // LIGHT MODE
+const OVERLAPPING_PREHIT_BG_COLORS = "#5e165e";
+
+// const HIT_BG_COLORS = ["red", "blue"];  // LIGHT MODE
+const HIT_BG_COLORS = ["#ff9494", "#7db6ff"];
+
+const OVERLAPPING_HIT_BG_COLORS = "purple";  // LIGHT MODE
 
 const CRASH_BOX_SHADOW = "0 0 10px 5px red";
 
@@ -218,7 +226,7 @@ function setup(_settings, _result, _flow) {
     game_body = document.getElementById("game-body");
 
     board = game_body.querySelector(".board");
-    info = game_body.querySelector(".info");
+    game_status = game_body.querySelector(".game-status");
     control = game_body.querySelector(".control");
 
     control.querySelector(".prev").addEventListener('click', control_prev);
@@ -233,12 +241,17 @@ function setup(_settings, _result, _flow) {
 
     control.querySelector(".zero").addEventListener('click', control_zero);
 
-    // -1 because the ticks start from 0.
-    control.querySelector(".tick-count").innerText = game_ticks - 1;
+    
+    if (game_ticks === 0) {
+        control.querySelector(".tick-count").innerText = "-"
+    } else {
+        // -1 because the ticks start from 0.
+        control.querySelector(".tick-count").innerText = game_ticks - 1;
+    }
 
     current_tick_text = control.querySelector(".current-tick");
 
-    info.querySelectorAll(".health").forEach((health, i) => {
+    game_status.querySelectorAll(".health").forEach((health, i) => {
         health.style.color = TANK_COLORS[i];
         health_texts.push(health);
     });
@@ -623,10 +636,15 @@ function run_simulation(starting_tick, initial_delay=true, keep_going=true) {
         player_tanks.push(tank_clone);
         player_tanks_bodies.push(tank_clone_body);
 
-        // Healthes must come from the next tick because the damages 
-        // of the missiles fired in a tick get applied in the next
-        // tick.
-        health_texts[i].innerText = String(flow[starting_flow_index][i][I['health']]);
+
+        if (flow.length == 1) {  // no ticks
+            health_texts[i].innerText = String(flow[0][i][I['health']]);
+        } else {
+            // Healthes must come from the next tick because the damages 
+            // of the missiles fired in a tick get applied in the next
+            // tick.
+            health_texts[i].innerText = String(flow[starting_flow_index][i][I['health']]);
+        }
     }
 
     current_tick_text.innerText = String(starting_tick);

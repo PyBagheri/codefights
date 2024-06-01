@@ -1,18 +1,16 @@
-from games.base import Game
-
 import random
 from copy import deepcopy
+
+from games._base.game import Game
+from games._base.report import VictoryDrawResult
+
+from games.tanks.frontend import TanksExplanation
 
 
 MAX_GAME_TICKS = 100
 
 # For now, the game board is 10*10.
 BOARD_HEIGHT, BOARD_WIDTH = 10, 10
-
-RESULT_WIN  = 'W'
-RESULT_DRAW = 'D'
-DRAW_BOTH_LOST = 'L'
-DRAW_X_TICK_LIMIT = 'X'
 
 UP, RIGHT, DOWN, LEFT = 'U', 'R', 'D', 'L'
 
@@ -95,13 +93,19 @@ class Tanks(Game):
         
         
         if p1_died and p2_died:
-            self.result = RESULT_DRAW, DRAW_BOTH_LOST
+            self.result = VictoryDrawResult.DRAW
             return True
         elif p1_died:
-            self.result = RESULT_WIN, self.players_alive[1]
+            self.result = VictoryDrawResult.get_win_lose_list(
+                self.player_count,
+                self.players_alive[1]
+            )
             return True
         elif p2_died:
-            self.result = RESULT_WIN, self.players_alive[0]
+            self.result = VictoryDrawResult.get_win_lose_list(
+                self.player_count,
+                self.players_alive[0]
+            )
             return True
         
         return False
@@ -217,14 +221,7 @@ class Tanks(Game):
     def simulate(self):
         tick = 0
         self.flow = []
-        
-        if not self.players_alive:
-            self.result = RESULT_DRAW, DRAW_BOTH_LOST
-            return
-        
-        if len(self.players_alive) == 1:
-            self.result = RESULT_WIN, self.players_alive[0]
-            return
+        self.explanation = ''
         
         
         # 'board' shows the list of tanks in each square in the game board.
@@ -276,13 +273,27 @@ class Tanks(Game):
              'targeted': None}
         ]
         
+        # The initial states.
+        self.flow.append(deepcopy([list(i.values()) for i in self.players_states]))
+        
+        
+        if not self.players_alive:
+            self.result = VictoryDrawResult.DRAW
+            return
+        
+        if len(self.players_alive) == 1:
+            self.result = VictoryDrawResult.get_win_lose_list(
+                self.player_count,
+                self.players_alive[0]
+            )
+            return
+        
+        
         self.board[0][0].append(self.players_alive[0])
         self.board[BOARD_WIDTH-1][BOARD_HEIGHT-1].append(
             self.players_alive[1]
         )
-        
-        # The initial states.
-        self.flow.append(deepcopy([list(i.values()) for i in self.players_states]))
+
         
         while tick < MAX_GAME_TICKS:
             # Apply damages from the actions of the previous tick.
@@ -306,13 +317,19 @@ class Tanks(Game):
             )
             
             if decision1 is None and decision2 is None:
-                self.result = RESULT_DRAW, DRAW_BOTH_LOST
+                self.result = VictoryDrawResult.DRAW
                 return
             elif decision1 is None:  # player 1 eliminated
-                self.result = RESULT_WIN, self.players_alive[1]
+                self.result = VictoryDrawResult.get_win_lose_list(
+                    self.player_count,
+                    self.players_alive[1]
+                )
                 return
             elif decision2 is None:  # player 2 eliminated
-                self.result = RESULT_WIN, self.players_alive[0]
+                self.result = VictoryDrawResult.get_win_lose_list(
+                    self.player_count,
+                    self.players_alive[0]
+                )
                 return
             
             # Reset the one-off values.
@@ -330,7 +347,8 @@ class Tanks(Game):
             
             tick += 1
         else:  # the max tick count has been reached.
-            self.result = RESULT_DRAW, DRAW_X_TICK_LIMIT
+            self.result = VictoryDrawResult.DRAW
+            self.explanation = TanksExplanation.X_TICK_LIMIT
             return
 
         # Reset the one-off values.
@@ -343,4 +361,4 @@ class Tanks(Game):
         
 
     def get_report(self):
-        return self.result, self.flow
+        return self.result, self.explanation, self.flow
