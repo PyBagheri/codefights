@@ -3,44 +3,18 @@
 
 
 {% block header %}
-<link rel="stylesheet" href="{% static 'accounts/settings.css' %}">
+<link rel="stylesheet" href="{% static 'pages/settings.css' %}">
 {% endblock header %}
 
 
 {% block content %}
 <div class="settings-page">
-  {% if successful %}
-  <div class="settings-successful">You have been signed up successfuly. Now, check your email for the confirmation link.</div>
-  {% else %}
-  <div class="settings-form-wrapper">
-    <div class="settings-form-title">Sign Up</div>
-        {% if wrong_credentials %}
-        <div class="settings-form-wrong-credentials">The username/email or password you entered are not correct.</div>
-        {% endif %}
-
-    <form method="post" class="settings-form">
-      {% csrf_token %}
-
-      <label for="username">Username:</label>
-      {{ form.username.errors }}
-      <input name="username" class="settings-form-input" value="{{ form.username.value }}">
+    <div class="settings-form-wrapper">
+        <div class="settings-form-title">Settings</div>
 
 
-      <label for="email">Email:</label>
-      {{ form.email.errors }}
-      <input type="email" name="email" class="settings-form-input" value="{{ form.email.value }}">
-
-      <label for="password">Password:</label>
-      {{ form.password.errors }}
-      <input type="password" name="password" class="settings-form-input">
-
-      <div class="settings-form-bottom">
-        <input type="submit" value="Confirm" class="settings-form-submit">
-        <a class="settings-form-forgot-password" href="{% url 'login' %}">Already a user?</a>
-      </div>
-    </form>
-  </div>
-  {% endif %}
+        <a href="{% url 'logout' %}" class="settings-logout">Logout</a>
+    </div>
 </div>
 {% endblock content %}
 

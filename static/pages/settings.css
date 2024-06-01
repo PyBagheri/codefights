@@ -1,0 +1,49 @@
+.settings-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.settings-page .settings-successful {
+  font-size: 1.5rem;
+  color: white;
+}
+.settings-page .settings-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 2.5rem;
+  background-color: rgb(37, 44, 73);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  width: min(100%, 25rem);
+  border-radius: 0.5rem;
+}
+.settings-page .settings-form-wrapper .settings-logout {
+  color: white;
+  font-size: 1.3rem;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  background-color: #ff8e8e;
+  align-self: start;
+  text-decoration: none;
+  user-select: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+@media (hover: hover) and (pointer: fine) {
+  .settings-page .settings-form-wrapper .settings-logout {
+    transition: 0.2s;
+  }
+  .settings-page .settings-form-wrapper .settings-logout:hover {
+    background-color: #ff5858;
+  }
+}
+.settings-page .settings-form-wrapper .settings-form-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+  color: white;
+}

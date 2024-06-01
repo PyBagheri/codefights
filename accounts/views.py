@@ -14,7 +14,7 @@ from accounts.services import (
     ResetPasswordService
 )
 
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 
 
 class LoginView(View):
@@ -106,6 +106,13 @@ class SignUpView(View):
         return render(request, self.template_name, context)
 
 
+class LogoutView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        
+        return redirect('login')
+
+
 class ForgotPasswordView(View):
     template_name = 'forgot_password.html'
     
@@ -186,13 +193,3 @@ class VerifyEmailView(View):
             raise Http404
         
         return v
-
-
-class SettingsView(LoginRequiredMixin, View):     
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('dashboard')
-        
-        return render(request, self.template_name, {})
-
-
