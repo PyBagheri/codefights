@@ -1,8 +1,7 @@
-import os
 import json
 from pathlib import Path
 
-from games.testing.coderunner import CRController
+from games._tests.coderunner import CRController
 from games import GAME_CLASSES
 
 
@@ -10,7 +9,7 @@ GAMES_ROOT = Path(__file__).parent.parent
 
 
 def run_game_and_report(game_class, game_settings, codes):
-    game_instance = game_class(game_settings)
+    game_instance = game_class(game_settings, len(codes))
     
     cr_controllers = []
     for code in codes:
@@ -40,14 +39,23 @@ def get_game_test_codes(game_name, codes_files):
     return codes
 
 
+def get_game_test_report(game_name, filename):
+    reports_dir = GAMES_ROOT / game_name / 'tests/reports'
+    
+    with open(reports_dir / filename, 'r') as f:
+        return f.read()
+    
+
 # A parent for game tests that provides tools for testing
 # a game's report with what's expected.
 class GameReportTest:
-    def run_and_test_game_report(self, game_name,
+    def run_and_test_game_report(self,
+                                 game_name,
                                  game_settings,
                                  codes_files,
-                                 expected_report):
+                                 expected_report_file):
         player_codes = get_game_test_codes(game_name, codes_files)
+        expected_report = get_game_test_report(game_name, expected_report_file)
         
         # We compare the JSON's rather than using assertSequenceEqual
         # because it takes away the distinction between lists and tuples
@@ -58,6 +66,9 @@ class GameReportTest:
                                     game_settings,
                                     player_codes)
             ),
-            json.dumps(expected_report)
+            
+            # We do this to make sure both JSON's are consistent in
+            # whitespaces and separators.
+            json.dumps(json.loads(expected_report))
         )
 
