@@ -17,7 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from pages.views import Handler404, Handler500
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('pages.urls'))
+    path('', include('pages.urls')),
+    path('games/', include('gamespecs.urls')),
+    path('fights/', include('fights.urls')),
+    path('accounts/', include('accounts.urls'))
 ]
+
+handler404 = Handler404.as_view()
+handler500 = Handler500.as_view()

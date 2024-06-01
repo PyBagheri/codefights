@@ -11,31 +11,50 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from environs import Env
+import importlib
+import os
+
+from games.frontend import GAMES_TEMPLATES_DIRS, GAMES_STATIC_DIRS
+
+
+os.environ.setdefault('GLOBAL_CONFIG_MODULE', 'config')
+
+global_config = importlib.import_module(
+    os.environ.get('GLOBAL_CONFIG_MODULE')
+)
+
+
+
+def get_secret(secret_name, mode='r'):
+    path = Path(f'/run/secrets/{secret_name}')
+    
+    if path.is_file():
+        with open(path, mode) as f:
+            return f.read()
+
+    # Fallback to environment variables. This is so that
+    # one can run this django project without docker too.
+    return os.environ.get(secret_name)
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-env = Env()
-
-# ONLY FOR DEBUGGING. Remove this line in production.
-env.read_env(BASE_DIR / '.env.dev')
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str('DJANGO_SECRET_KEY')
+SECRET_KEY = get_secret('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG')
+DEBUG = global_config.DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = global_config.ALLOWED_HOSTS
 
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = global_config.CSRF_TRUSTED_ORIGINS
 
 
 # Application definition
@@ -54,6 +73,7 @@ INSTALLED_APPS = [
     'blog',
     'chats',
     'fights',
+    'gamespecs',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +91,7 @@ ROOT_URLCONF = 'django_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates', *[BASE_DIR / d for d in GAMES_TEMPLATES_DIRS]],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,7 +111,14 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': env.dj_db_url('POSTGRES_URL')
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': global_config.POSTGRES['DATABASE_NAME'],
+        'USER': global_config.POSTGRES['USER'],
+        'PASSWORD': get_secret('POSTGRES_PASSWORD'),
+        'HOST': global_config.POSTGRES['HOST'],
+        'PORT': global_config.POSTGRES['PORT'],
+    }
 }
 
 
@@ -126,10 +153,36 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Minutes until the verification link sent to the email is expired.
+EMAIL_VERIFICATION_EXPIRY_MINUTES = 15
+
+
+AUTHENTICATION_BACKENDS = ['accounts.backends.UsernameOrEmailBackend']
+
+
+# The frontend.py module inside the games root package.
+# The games package must be either a docker volume in a
+# container or on the host machine itself. This is so that
+# we can run the project without docker too.
+GAMES_FRONTEND_MODULE = 'games.frontend'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = global_config.STATIC_URL
+
+STATICFILES_DIRS = [BASE_DIR / 'static', *[BASE_DIR / d for d in GAMES_STATIC_DIRS]]
+
+# Must be either a docker volume in a container or
+# on the host machine itself. This is so that we can
+# run the project without docker too.
+#
+# This is useful for using manage.py collectstatic;
+# Django will not be serving static files.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -141,6 +194,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USERNAME_MIN_LENGTH = 5
 
 AUTH_USER_MODEL = 'accounts.User'
+
+
+MEDIA_URL = global_config.MEDIA_URL
+
+# Must be either a docker volume in a container or
+# on the host machine itself. This is so that we can
+# run the project without docker too.
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+MAX_CODE_UPLOAD_SIZE = 100000  # in bytes
+
+MAX_USER_ATTENDED_FIGHTS = 1
 
 
 # If the "Origin" header is not present in an HTTPS request,
@@ -157,44 +223,16 @@ SECURE_REFERRER_POLICY = 'same-origin'
 WEBSOCKET_ROOT_URLCONF = 'django_project.websocket.urls'
 
 
+REDIS_SERVER_URL = global_config.REDIS_SERVER_URL
 
-REDIS_SERVER_URL = env.str('REDIS_SERVER_URL')
-
-DOCKER_SERVER_URL = env.str('DOCKER_SERVER_URL')
-
+REDIS_SIMULATOR_STREAM = global_config.REDIS_SIMULATOR_STREAM
 
 
-SIMULATION_SIMULATOR_WORKERS = 4
-SIMULATION_SIGNALS_WORKERS = 4
-
-# The Linux user with minimal previleges that will be used
-# to run the simulations.
-SIMULATOR_USERNAME = env.str('SIMULATOR_USERNAME')
-
-# The Docker image's name that was built for the coderunner (CR).
-# See simulator/coderunner.
-SIMULATOR_CR_DOCKER_IMAGE = env.str('SIMULATOR_CR_DOCKER_IMAGE')
-
-# AppArmor profile for the coderunner container.
-SIMULATOR_CR_DOCKER_AA_PROFILE = 'cr-container-profile'
-
-# Relative to the project root
-GAMES_PACKAGE = 'games'
-
-# It's recommended to be somewhere in /srv. See:
-# https://unix.stackexchange.com/questions/233343/
-UPLOADED_CODES_DIR = env.str('UPLOADED_CODES_DIR')
+LOGGING_ROOT = global_config.LOGGING_ROOT
+LOGGING_FILES_PATHS = global_config.LOGGING_FILES_PATHS
 
 
-REDIS_SIMULATOR_STREAM = env.str('REDIS_SIMULATOR_STREAM')
-REDIS_SIMULATOR_GROUP = env.str('REDIS_SIMULATOR_GROUP')
-
-REDIS_SIMULATION_RESULTS_STREAM = env.str('REDIS_SIMULATION_RESULTS_STREAM')
-
-
-LOGGING_ROOT = env.str('LOGGING_ROOT')
-LOGGING_FILES_PATHS = {
-    'workers': {
-        'simulator': 'workers/simulator.log'
-    }
-}
+# These are relative to the MEDIA_ROOT.
+FIGHT_CODES_DIR = Path(global_config.FIGHT_CODES_DIR)
+PRESET_CODES_DIR = Path(global_config.PRESET_CODES_DIR)
+TEMPLATE_CODES_DIR = Path(global_config.TEMPLATE_CODES_DIR)

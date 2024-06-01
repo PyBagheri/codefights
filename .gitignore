@@ -5,3 +5,5 @@
 **/*.o
 **/*.rdb
 **/*.log
+**/migrations/
+media/
