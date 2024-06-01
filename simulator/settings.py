@@ -10,8 +10,11 @@
 # class objects). So, be mindful.
 # *********************************************************
 
-
 import signal
+from pathlib import Path
+
+
+SIMULATOR_ROOT = Path(__file__).parent
 
 
 # This is only used for reference within this file.
@@ -113,6 +116,22 @@ WAITPID_FLAGS = 0x40000000
 GAME_CLASSES_RELOAD_SIGNAL = signal.SIGUSR1
 
 CPU_TIME_EXCEED_SIGNAL = signal.SIGUSR1
+
+
+# The index.py module inside the games root package. The
+# games package must be a either a docker volume in a
+# container or the games root package on the host machine.
+# This is relative to the parent of the simulator root
+# (the entry will be run using "python -m simulator.entry").
+# For this matter, the docker volume for games root package
+# must be mounted in the correct path.
+GAMES_INDEX_MODULE = 'games.index'
+
+
+# This must be either a docker volume in a container or
+# the media root on the host machine.
+MEDIA_ROOT = SIMULATOR_ROOT.parent / 'media'
+
 
 # -------- Control codes --------
 
