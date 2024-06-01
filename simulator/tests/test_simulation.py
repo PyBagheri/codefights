@@ -13,16 +13,6 @@ from simulator.tests.base import (
 
 class ResultTest(SimulatorTests, unittest.TestCase):         
     def test_different_types_can_be_sent(self):
-        code = rm_left_spaces(
-        """
-        class Main:
-            def testfunc1(self, *args):
-                arg_list = {}
-                for i in range(len(args)):
-                    arg_list[i] = args[i]
-                return arg_list
-        """, 8)
-        
         # JSON-serializable types. Note:
         # - tuples will be converted to list.
         # - dict keys cannot be integers. They will
@@ -42,8 +32,8 @@ class ResultTest(SimulatorTests, unittest.TestCase):
         data = {
             'fight_id': 1234,
             'game': 'testgame1',
-            'game_settings': {'player_count': 1, 'test_args': test_args},
-            'player_codes': [code],
+            'game_settings': {'test_args': test_args},
+            'codes_filenames': ['testcode1.py'],
         }
 
         res = self.request_simulation_and_result(data)

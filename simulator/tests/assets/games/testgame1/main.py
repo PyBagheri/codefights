@@ -1,4 +1,4 @@
-from games.base import Game
+from games._base.game import Game
 
 # a 1-player test game
 class TestGame1(Game):
@@ -10,7 +10,7 @@ class TestGame1(Game):
         }
     
     def simulate(self):
-        if not self.initial_players:
+        if not self.players_alive:
             self.report = -1  # just to test
             
         cr1 = self.cr_controllers[0]

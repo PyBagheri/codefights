@@ -27,43 +27,10 @@ import logging
 import logging.handlers
 from pathlib import Path
 import importlib
-
-import json, functools
+import functools
+import json
 from json.decoder import JSONDecodeError
-
-
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_project.settings')
-from django.conf import settings as project_settings
-
-
-# Simulator settings.
-from simulator.settings import (
-    CHILD_MAX_WRITE_SIZE,
-
-    FORKSERVER_PIPES_FDS,
-    FORKED_PIPES_FDS,
-    
-    PTRACE_ALLOWED_SYSCALLS,
-    
-    WAITPID_FLAGS,
-    
-    GAME_CLASSES_RELOAD_SIGNAL,
-    
-    CPU_TIME_EXCEED_SIGNAL,
-
-    # -------- Control codes --------
-    
-    # Used in the fork server.
-    CC_F_FORK_CHILD,
-    CC_F_CONTINUE,
-
-    # Used in the children.
-    CC_C_CHILD_READY,
-    CC_C_START_SIMULATION,
-    
-    # -------------------------------
-)
+from common.values import TerminationReasons
 
 # The C extension for managing the tracer.
 from simulator.extensions.build import tracer
@@ -91,7 +58,27 @@ class Forked_CodeSabotage(Exception):
     pass
 
 
-logging_file_path = project_settings.LOGGING_FILES_PATHS['workers']['simulator']
+SIMULATOR_ROOT = Path(__file__).parent
+
+
+# The config file can be either inside the docker container
+# as a docker config, or out of docker in the project root.
+# This is so that we can run this both with and without docker.
+os.environ.setdefault('GLOBAL_CONFIG_MODULE', 'config')
+
+os.environ.setdefault('SIMULATOR_SETTINGS_MODULE', 'simulator.settings')
+
+
+settings = importlib.import_module(os.environ.get('SIMULATOR_SETTINGS_MODULE'))
+global_config = importlib.import_module(os.environ.get('GLOBAL_CONFIG_MODULE'))
+
+
+log_file = Path(global_config.LOGGING_ROOT) / \
+    global_config.LOGGING_FILES_PATHS['workers']['simulator']
+
+if not Path(log_file).parent.is_dir():
+    Path(log_file).parent.mkdir(parents=True)
+
 
 # We open the stderr separately from sys.stderr so
 # that when python writes to sys.stderr it won't
@@ -108,7 +95,7 @@ logging.basicConfig(
     handlers=[
         logging.StreamHandler(stream=stderr_stream),
         logging.handlers.WatchedFileHandler(
-            filename=Path(project_settings.LOGGING_ROOT) / logging_file_path,
+            filename=log_file,
             mode='a', encoding='utf-8'
         )
     ])
@@ -143,8 +130,8 @@ sys.stderr.write = write_error_with_log
 # all ready when needed to be accessed. We import
 # the module separately so that we can use reload()
 # on it.
-games = importlib.import_module(project_settings.GAMES_PACKAGE)
-GAME_CLASSES = games.GAME_CLASSES
+games_index = importlib.import_module(settings.GAMES_INDEX_MODULE)
+GAME_CLASSES = games_index.GAME_CLASSES
 
 logging.info('Game classes have been loaded.')
 logging.info(f'> games list: {list(GAME_CLASSES.keys())}')
@@ -155,14 +142,14 @@ logging.info(f'> games list: {list(GAME_CLASSES.keys())}')
 def reload_game_classes(*args, **kwargs):
     global GAME_CLASSES
     
-    importlib.reload(games)
-    GAME_CLASSES = games.GAME_CLASSES
+    importlib.reload(games_index)
+    GAME_CLASSES = games_index.GAME_CLASSES
     
     logging.info('Game classes have been refreshed by a '
-                 f'{GAME_CLASSES_RELOAD_SIGNAL.name}.')
+                 f'{settings.GAME_CLASSES_RELOAD_SIGNAL.name}.')
     logging.info(f'> games list: {list(GAME_CLASSES.keys())}')
 
-signal.signal(GAME_CLASSES_RELOAD_SIGNAL, reload_game_classes)
+signal.signal(settings.GAME_CLASSES_RELOAD_SIGNAL, reload_game_classes)
 
 
 # ensure_ascii is True by default but we emphasize here. It's
@@ -178,24 +165,19 @@ json.dumps = functools.partial(
 
 
 # The pipe fd numbers used by forked children.
-tracer.set_forked_pipe_fds(FORKED_PIPES_FDS['r'], FORKED_PIPES_FDS['w'])
+tracer.set_forked_pipe_fds(settings.FORKED_PIPES_FDS['r'],
+                           settings.FORKED_PIPES_FDS['w'])
 
 # The pipe fd numbers used by the forkserver.
-tracer.set_forkserver_pipe_fds(FORKSERVER_PIPES_FDS['r'], FORKSERVER_PIPES_FDS['w'])
+tracer.set_forkserver_pipe_fds(settings.FORKSERVER_PIPES_FDS['r'],
+                               settings.FORKSERVER_PIPES_FDS['w'])
 
 # Also defined in coderunner/run.py. Note that the
 # version here MUST NOT contain the read() or the
 # write() syscalls, whereas the one in run.py must.
-tracer.set_allowed_syscalls(PTRACE_ALLOWED_SYSCALLS)
+tracer.set_allowed_syscalls(settings.PTRACE_ALLOWED_SYSCALLS)
 
-tracer.set_write_max_bytes(CHILD_MAX_WRITE_SIZE)
-
-
-# Retrieve the settings that are accessed constantly
-# only once to avoid lookup each time.
-REDIS_SIMULATOR_GROUP = project_settings.REDIS_SIMULATOR_GROUP
-REDIS_SIMULATOR_STREAM = project_settings.REDIS_SIMULATOR_STREAM
-REDIS_SIMULATION_RESULTS_STREAM = project_settings.REDIS_SIMULATION_RESULTS_STREAM
+tracer.set_write_max_bytes(settings.CHILD_MAX_WRITE_SIZE)
 
 
 # Communicate through I/O streams, with enforced newlines
@@ -238,10 +220,10 @@ class StreamTalker:
 
 
 # We'll want everything in text form, so enable auto-decoding.
-redis_client = redis.from_url(project_settings.REDIS_SERVER_URL,
+redis_client = redis.from_url(global_config.REDIS_SERVER_URL,
                               decode_responses=True)
 
-docker_client = docker.DockerClient(base_url=project_settings.DOCKER_SERVER_URL)
+docker_client = docker.DockerClient(base_url=global_config.DOCKER_SERVER_URL)
 
 # If anything fails for the forkserver in the beginning, we
 # won't log it directly, and rather let it simply error and exit.
@@ -249,10 +231,12 @@ docker_client = docker.DockerClient(base_url=project_settings.DOCKER_SERVER_URL)
 
 # fs: forkserver
 fs_container = docker_client.containers.run(
-    project_settings.SIMULATOR_CR_DOCKER_IMAGE,
+    global_config.SIMULATOR_CODERUNNER['DOCKER_IMAGE'],
     detach=True,
-    user=pwd.getpwnam(project_settings.SIMULATOR_USERNAME).pw_uid,
-    security_opt=[f"apparmor={project_settings.SIMULATOR_CR_DOCKER_AA_PROFILE}"],
+    user=pwd.getpwnam(global_config.SIMULATOR_CODERUNNER['USERNAME']).pw_uid,
+    security_opt=[
+        f"apparmor={global_config.SIMULATOR_CODERUNNER['DOCKER_APPARMOR_PROFILE']}"
+    ],
     read_only=True,
 )
 
@@ -307,13 +291,13 @@ tracer.forkserver_attach(fs_pid)
 tracer.forkserver_wait_first_read(fs_pid)
 
 fs_pidfd = os.pidfd_open(fs_pid)
-fs_read_fd = tracer.pidfd_getfd(fs_pidfd, FORKSERVER_PIPES_FDS['_r'])
-fs_write_fd = tracer.pidfd_getfd(fs_pidfd, FORKSERVER_PIPES_FDS['_w'])
+fs_read_fd = tracer.pidfd_getfd(fs_pidfd, settings.FORKSERVER_PIPES_FDS['_r'])
+fs_write_fd = tracer.pidfd_getfd(fs_pidfd, settings.FORKSERVER_PIPES_FDS['_w'])
 
 fs_talker = StreamTalker.from_fd(fs_read_fd, fs_write_fd, 
                                  ForkServer_UnknownKill)
 
-fs_talker.send(CC_F_CONTINUE)
+fs_talker.send(settings.CC_F_CONTINUE)
 
 logging.info('Successfully connected to the forkserver pipes.')
 
@@ -322,25 +306,6 @@ logging.info('Successfully connected to the forkserver pipes.')
 fs_send = fs_talker.send
 fs_recv = fs_talker.recv
 
-
-###################################################################
-###### TODO: Termination reasons should be brought from the model
-###### choices rather than having them written here directly. Fix
-###### after defining the models for game reports.
-###################################################################
-
-# ----- Termination reasons -----
-
-TR_ILLEGAL_SYSC =  'IS'
-TR_ENOMEM =        'EM'
-TR_UNKNOWN_KILL =  'UK'
-TR_UNKNOWN_SIG =   'US'
-TR_UNEXP_CONT =    'UC'
-TR_SABOTAGE =      'CS'
-TR_XCPUTIME =      'XT'
-TR_SECCOMP =       'SP'  # shouldn't really happen.
-
-# -------------------------------
 
 # Coderunner Controller
 class CRController:
@@ -365,7 +330,7 @@ class CRController:
         #      we do, is kill by SIGKILL and waitpid to
         #      get rid of the zombie.
         try:
-            fs_send(CC_F_FORK_CHILD)
+            fs_send(settings.CC_F_FORK_CHILD)
             
             # Wait for stop due to fork().
             tracer.forkserver_wait_stop(fs_pid)
@@ -398,8 +363,8 @@ class CRController:
             child_pidfd = os.pidfd_open(child_pid)
             self.pidfd = child_pidfd
             
-            child_r_fd = tracer.pidfd_getfd(child_pidfd, FORKED_PIPES_FDS['_r'])
-            child_w_fd = tracer.pidfd_getfd(child_pidfd, FORKED_PIPES_FDS['_w'])
+            child_r_fd = tracer.pidfd_getfd(child_pidfd, settings.FORKED_PIPES_FDS['_r'])
+            child_w_fd = tracer.pidfd_getfd(child_pidfd, settings.FORKED_PIPES_FDS['_w'])
             
             if child_r_fd == -1 or child_w_fd == -1:
                 # The only way we might fail to get the established fd's
@@ -426,7 +391,7 @@ class CRController:
             # Resume until the final read() before starting the simulation.
             tracer.forked_resume_until_read(child_pid)
             
-            child_talker.send(CC_C_START_SIMULATION)
+            child_talker.send(settings.CC_C_START_SIMULATION)
             
             # Stop at the syscall-exit-stop of the read(). Basically
             # getting ready to run forked_trace_until_rw().
@@ -469,7 +434,7 @@ class CRController:
             # has written for us. If an attacker somehow manages to
             # change the value of this write, then just terminate the
             # child.
-            if child_talker.recv() != CC_C_CHILD_READY:
+            if child_talker.recv() != settings.CC_C_CHILD_READY:
                 raise Forked_CodeSabotage('no CC_C_CHILD_READY')
             
             # At this point, the child is ready to accept commands
@@ -492,22 +457,22 @@ class CRController:
         # In case a ForkServer_* error happens, we let it simply
         # error out (which also logs it) and exit this worker.
         except Forked_IllegalSyscall as e:
-            termination_reason = TR_ILLEGAL_SYSC
+            termination_reason = TerminationReasons.ILLEGAL_SYSCALL
             exc_args = e.args
         except Forked_UnknownSignal as e:
-            termination_reason = TR_UNKNOWN_SIG
+            termination_reason = TerminationReasons.UNKNOWN_SIGNAL
             exc_args = e.args
         except Forked_ENOMEM as e:
-            termination_reason = TR_ENOMEM
+            termination_reason = TerminationReasons.ENOMEM
             exc_args = e.args
         except Forked_UnknownKill as e:
-            termination_reason = TR_UNKNOWN_KILL
+            termination_reason = TerminationReasons.UNKNOWN_KILL
             exc_args = e.args
         except Forked_CodeSabotage as e:
-            termination_reason = TR_SABOTAGE
+            termination_reason = TerminationReasons.SABOTAGE
             exc_args = e.args
         except Forked_UnexpectedCont as e:
-            termination_reason = TR_UNEXP_CONT
+            termination_reason = TerminationReasons.UNEXP_CONT
             exc_args = e.args
         
         self.finish_after_error(termination_reason, exc_args, is_setup)
@@ -522,9 +487,11 @@ class CRController:
         # or seccomp's SIGSYS, and we consume the waitpid() and include
         # it in the args of the exception. Therefore, doing a kill() or
         # waitpid() would fail in this case.
-        if termination_reason == TR_UNKNOWN_KILL:
-            # When we raise an UnknownKill error, if we include the 
-            # explanation arg for the exception, it means that the
+        #
+        # Note that for a seccomp kill, os.WIFSIGNALED actually gives True.
+        if termination_reason == TerminationReasons.UNKNOWN_KILL:
+            # When we raise an UnknownKill error, if we don't include
+            # the explanation arg for the exception, it means that the
             # kill happened before attaching to the process.
             
             # Note that seccomp shouldn't really ever be triggered
@@ -541,22 +508,22 @@ class CRController:
             # signal was SIGSYS, it does not trigger a ptrace-stop and
             # causes a kill instead.
             if os.WTERMSIG(explanation) == signal.SIGSYS.value:  # seccomp
-                termination_reason = TR_SECCOMP
+                termination_reason = TerminationReasons.SECCOMP
         else:
             os.kill(self.pid, signal.SIGKILL.value)
-            os.waitpid(self.pid, WAITPID_FLAGS)
+            os.waitpid(self.pid, settings.WAITPID_FLAGS)
         
         
         # Check if we know about the "unknown" signal.
-        if termination_reason == TR_UNKNOWN_SIG and explanation is not None:
+        if termination_reason == TerminationReasons.UNKNOWN_SIGNAL and explanation is not None:
             sig = os.WSTOPSIG(explanation)
             
-            if sig == CPU_TIME_EXCEED_SIGNAL.value:
-                termination_reason = TR_XCPUTIME
+            if sig == settings.CPU_TIME_EXCEED_SIGNAL.value:
+                termination_reason = TerminationReasons.XCPUTIME
 
         # Wait stop due to SIGCHLD. This also consumes
         # the status so that we don't confuse it later.
-        os.waitpid(fs_pid, WAITPID_FLAGS)  
+        os.waitpid(fs_pid, settings.WAITPID_FLAGS)  
         
         # Resume after signal-stop due to SIGCHLD.
         tracer.forkserver_resume(fs_pid)
@@ -656,29 +623,29 @@ class CRController:
                 # simply ignore it.
                 return -1  # means exception
         except Forked_IllegalSyscall as e:
-            termination_reason = TR_ILLEGAL_SYSC
+            termination_reason = TerminationReasons.ILLEGAL_SYSCALL
             exc_args = e.args
         except Forked_UnknownSignal as e:
-            termination_reason = TR_UNKNOWN_SIG
+            termination_reason = TerminationReasons.UNKNOWN_SIGNAL
             exc_args = e.args
         except Forked_ENOMEM as e:
-            termination_reason = TR_ENOMEM
+            termination_reason = TerminationReasons.ENOMEM
             exc_args = e.args
         except Forked_UnknownKill as e:
-            termination_reason = TR_UNKNOWN_KILL
+            termination_reason = TerminationReasons.UNKNOWN_KILL
             exc_args = e.args
         except Forked_CodeSabotage as e:
-            termination_reason = TR_SABOTAGE
+            termination_reason = TerminationReasons.SABOTAGE
             exc_args = e.args
         except Forked_UnexpectedCont as e:
-            termination_reason = TR_UNEXP_CONT
+            termination_reason = TerminationReasons.UNEXP_CONT
             exc_args = e.args
         except JSONDecodeError:
             # If the untrusted code somehow manages to mess with
             # the code we've written for the forked child, then
             # it's a sabotage. In the coderunnre child we always
             # try to return a valid JSON, even on exceptions.
-            termination_reason = TR_SABOTAGE
+            termination_reason = TerminationReasons.SABOTAGE
             exc_args = ('JSONDecodeError',)
         
         self.finish_after_error(termination_reason, exc_args, True)
@@ -690,11 +657,11 @@ class CRController:
         # it will remain as a zombie process for us to get its
         # wait status.
         os.kill(self.pid, signal.SIGKILL.value)
-        os.waitpid(self.pid, WAITPID_FLAGS)
+        os.waitpid(self.pid, settings.WAITPID_FLAGS)
 
         # See the comments in 'finish_after_error' for an
         # explanation of the following.
-        os.waitpid(fs_pid, WAITPID_FLAGS)
+        os.waitpid(fs_pid, settings.WAITPID_FLAGS)
         tracer.forkserver_resume(fs_pid)
         
         fs_send(self.icns_pid_str)
@@ -709,6 +676,16 @@ class CRController:
         self.is_alive = False
 
 
+def get_code(filename):
+    try:
+        with open(settings.MEDIA_ROOT / filename) as f:
+            return f.read()
+    # If the player uploads a bytes-formatted file,
+    # just return an empty string as the code.
+    except UnicodeDecodeError:
+        return ''
+
+
 def process(message):
     message_id, serialized_data = message
     
@@ -716,11 +693,12 @@ def process(message):
     
     fight_id = data['fight_id']
     game_settings = data['game_settings']
-    player_codes = data['player_codes']
-    player_count = game_settings['player_count']
+    codes_filenames = data['codes_filenames']
+    player_count = len(codes_filenames)
 
     game = GAME_CLASSES[data['game']](
-        game_settings=game_settings
+        game_settings=game_settings,
+        player_count=player_count
     )
     
     # Memory and CPU time limits
@@ -730,6 +708,8 @@ def process(message):
     initial_players = []
     
     for player_index in range(player_count):
+        player_code = get_code(codes_filenames[player_index])
+        
         # TODO: maybe also let the game give each player's Main instance
         # extra context (e.g., by appending it to "context", which is
         # currently only the game settings). Even though we can still
@@ -737,7 +717,7 @@ def process(message):
         # by the game in the beginning and give the context to it so
         # that the player can save it, but that would mean that the player
         # has to write more code.
-        crc = CRController(player_codes[player_index], game_settings, limits)
+        crc = CRController(player_code, game_settings, limits)
         cr_controllers.append(crc)
         
         if crc.is_alive:
@@ -760,20 +740,22 @@ def process(message):
                    'report': game.get_report(),
                    'final_states': final_states}
 
-    redis_client.xadd(REDIS_SIMULATION_RESULTS_STREAM,
+    redis_client.xadd(global_config.REDIS_RESULT_PROCESSOR_STREAM,
         {'data': json.dumps(output_data)}
     )
 
-    redis_client.xack(REDIS_SIMULATOR_STREAM, REDIS_SIMULATOR_GROUP, message_id)
+    redis_client.xack(global_config.REDIS_SIMULATOR_STREAM,
+                      global_config.REDIS_SIMULATOR_GROUP,
+                      message_id)
 
 
 # The worker might crash while some simulations have
 # not been acknowledged yet (which shouldn't really
-# be more than one). We redo those simulations.
+# be more than one per worker). We redo those simulations.
 unacked = redis_client.xreadgroup(
-        groupname=REDIS_SIMULATOR_GROUP,
+        groupname=global_config.REDIS_SIMULATOR_GROUP,
         consumername=WORKER_NAME,
-        streams={REDIS_SIMULATOR_STREAM: '0'},
+        streams={global_config.REDIS_SIMULATOR_STREAM: '0'},
 )[0][1]  # get for the one and only relevant stream.
 
 for msg in unacked:
@@ -782,9 +764,9 @@ for msg in unacked:
 
 while True:
     query = redis_client.xreadgroup(
-        groupname=REDIS_SIMULATOR_GROUP,
+        groupname=global_config.REDIS_SIMULATOR_GROUP,
         consumername=WORKER_NAME,
-        streams={REDIS_SIMULATOR_STREAM: '>'},  # only the new messages
+        streams={global_config.REDIS_SIMULATOR_STREAM: '>'},  # only the new messages
         block=0,  # block until a new message arrives.
         count=1
     )[0]  # get for the one and only relevant stream.
