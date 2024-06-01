@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'base/base.css' %}">
+    {% block header %}{% endblock header %}
+</head>
+<body>
+    <div class="main">
+        <div class="header">
+            <div class="header-left">
+                <div class="header-logo"><a href="{% url 'dashboard' %}">Codefights</a></div>
+                <div class="header-link header-games"><a href="{% url 'games_list' %}">Games</a></div>
+                <div class="header-link header-fights"><a href="{% url 'public_fights' %}">Public Fights</a></div>
+                <div class="header-link header-guide"><a href="{% url 'guide' %}">Guide</a></div>
+            </div>
+            <div class="header-right">
+                <div class="header-settings"><ion-icon name="settings-outline"></ion-icon></div>
+            </div>
+        </div>
+        <div class="content">
+            {% block content %}{% endblock content %}
+        </div>
+        <div class="footer">
+            <div class="footer-left">
+                <div class="footer-logo">Codefights</div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-link footer-guide">Guide</div>
+                <div class="footer-link footer-about">About</div>
+                <div class="footer-link footer-license">License</div>
+                <div class="footer-link footer-github"><ion-icon name="logo-github"></ion-icon></div>
+            </div>
+        </div>
+    </div>
+    <div class="confirmation-dialog">
+        <div class="confirmation-dialog-main">
+            <div class="confirmation-dialog-title"></div>
+            <div class="confirmation-dialog-description"></div>
+            <div class="confirmation-dialog-bottom">
+                <div class="confirmation-dialog-btn btn-yes">YES</div>
+                <div class="confirmation-dialog-btn btn-no">NO</div>
+            </div>
+        </div>
+        <form class="confirmation-form" method="post">
+            {% csrf_token %}
+            <input name="confirmed" type="checkbox" checked hidden />
+        </form>
+    </div>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    <script src="{% static 'base/base.js' %}"></script>
+    {% block scripts %}{% endblock scripts %}
+</body>
+</html>

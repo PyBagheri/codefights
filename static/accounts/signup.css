@@ -1,0 +1,101 @@
+.signup-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.signup-page .signup-successful {
+  font-size: 1.5rem;
+  color: white;
+}
+.signup-page .signup-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 2.5rem;
+  background-color: rgb(37, 44, 73);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  width: min(100%, 25rem);
+  border-radius: 0.5rem;
+}
+.signup-page .signup-form-wrapper .signup-form-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+  color: white;
+}
+.signup-page .signup-form-wrapper .signup-form-wrong-credentials {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+  color: rgb(255, 182, 182);
+}
+.signup-page .signup-form-wrapper .signup-form {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  color: white;
+}
+.signup-page .signup-form-wrapper .signup-form .errorlist {
+  color: #ff9090;
+}
+.signup-page .signup-form-wrapper .signup-form label {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.signup-page .signup-form-wrapper .signup-form label:not(:first-of-type) {
+  margin-top: 2rem;
+}
+.signup-page .signup-form-wrapper .signup-form .signup-form-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+}
+.signup-page .signup-form-wrapper .signup-form .signup-form-bottom .signup-form-login {
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #9bb4ff;
+  font-weight: 700;
+}
+@media (hover: hover) and (pointer: fine) {
+  .signup-page .signup-form-wrapper .signup-form .signup-form-bottom .signup-form-login {
+    transition: 0.2s;
+  }
+  .signup-page .signup-form-wrapper .signup-form .signup-form-bottom .signup-form-login:hover {
+    color: #799aff;
+  }
+}
+.signup-page .signup-form-wrapper .signup-form .signup-form-bottom .signup-form-submit {
+  color: white;
+  font-size: 1.3rem;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  background-color: #10874a;
+  align-self: end;
+  user-select: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+@media (hover: hover) and (pointer: fine) {
+  .signup-page .signup-form-wrapper .signup-form .signup-form-bottom .signup-form-submit {
+    transition: 0.2s;
+  }
+  .signup-page .signup-form-wrapper .signup-form .signup-form-bottom .signup-form-submit:hover {
+    background-color: rgb(14, 86, 11);
+  }
+}
+.signup-page .signup-form-wrapper .signup-form .signup-form-input {
+  color: white;
+  font-size: 1.3rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  background-color: #2e4d75;
+}

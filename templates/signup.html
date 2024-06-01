@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'accounts/signup.css' %}">
+{% endblock header %}
+
+
+{% block content %}
+<div class="signup-page">
+  {% if successful %}
+  <div class="signup-successful">You have been signed up successfuly. Now, check your email for the confirmation link.</div>
+  {% else %}
+  <div class="signup-form-wrapper">
+    <div class="signup-form-title">Sign Up</div>
+        {% if wrong_credentials %}
+        <div class="signup-form-wrong-credentials">The username/email or password you entered are not correct.</div>
+        {% endif %}
+
+    <form method="post" class="signup-form">
+      {% csrf_token %}
+
+      <label for="username">Username:</label>
+      {{ form.username.errors }}
+      <input name="username" class="signup-form-input" value="{{ form.username.value }}">
+
+
+      <label for="email">Email:</label>
+      {{ form.email.errors }}
+      <input type="email" name="email" class="signup-form-input" value="{{ form.email.value }}">
+
+      <label for="password">Password:</label>
+      {{ form.password.errors }}
+      <input type="password" name="password" class="signup-form-input">
+
+      <div class="signup-form-bottom">
+        <input type="submit" value="Confirm" class="signup-form-submit">
+        <a class="signup-form-login" href="{% url 'login' %}">Already a user?</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endblock content %}
+

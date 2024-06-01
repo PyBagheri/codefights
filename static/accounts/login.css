@@ -1,0 +1,109 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.login-page .login-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 2.5rem;
+  background-color: rgb(37, 44, 73);
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  width: min(100%, 25rem);
+  border-radius: 0.5rem;
+}
+.login-page .login-form-wrapper .login-form-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+  color: white;
+}
+.login-page .login-form-wrapper .login-form-wrong-credentials {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+  color: rgb(255, 182, 182);
+}
+.login-page .login-form-wrapper .login-form {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  color: white;
+}
+.login-page .login-form-wrapper .login-form label {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.login-page .login-form-wrapper .login-form label:not(:first-of-type) {
+  margin-top: 2rem;
+}
+.login-page .login-form-wrapper .login-form .login-form-forgot-password {
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #9bb4ff;
+  font-weight: 700;
+  margin-top: 0.8rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .login-page .login-form-wrapper .login-form .login-form-forgot-password {
+    transition: 0.2s;
+  }
+  .login-page .login-form-wrapper .login-form .login-form-forgot-password:hover {
+    color: #799aff;
+  }
+}
+.login-page .login-form-wrapper .login-form .login-form-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+}
+.login-page .login-form-wrapper .login-form .login-form-bottom .login-form-signup {
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #9bb4ff;
+  font-weight: 700;
+}
+@media (hover: hover) and (pointer: fine) {
+  .login-page .login-form-wrapper .login-form .login-form-bottom .login-form-signup {
+    transition: 0.2s;
+  }
+  .login-page .login-form-wrapper .login-form .login-form-bottom .login-form-signup:hover {
+    color: #799aff;
+  }
+}
+.login-page .login-form-wrapper .login-form .login-form-bottom .login-form-submit {
+  color: white;
+  font-size: 1.3rem;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  background-color: #10874a;
+  align-self: end;
+  user-select: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+@media (hover: hover) and (pointer: fine) {
+  .login-page .login-form-wrapper .login-form .login-form-bottom .login-form-submit {
+    transition: 0.2s;
+  }
+  .login-page .login-form-wrapper .login-form .login-form-bottom .login-form-submit:hover {
+    background-color: rgb(14, 86, 11);
+  }
+}
+.login-page .login-form-wrapper .login-form .login-form-input {
+  color: white;
+  font-size: 1.3rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  background-color: #2e4d75;
+}

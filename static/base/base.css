@@ -1,0 +1,227 @@
+html, body {
+  margin: 0;
+  height: 100%;
+}
+html, html input, body, body input {
+  font-family: "Open Sans", sans-serif;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background-color: rgb(25, 28, 36);
+}
+.main .header {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem 4rem;
+  height: 4rem;
+  border-bottom: 1px solid rgb(60, 60, 60);
+  z-index: 5;
+  color: white;
+}
+.main .header a {
+  text-decoration: none;
+  color: white;
+}
+.main .header .header-right, .main .header .header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main .header .header-left {
+  flex-grow: 1;
+  margin-top: -3px;
+}
+.main .header .header-left > :not(:last-child) {
+  margin-right: 2.5rem;
+}
+.main .header .header-left .header-logo {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-right: 3rem;
+}
+.main .header .header-left .header-logo, .main .header .header-left .header-link {
+  user-select: none;
+  cursor: pointer;
+}
+.main .header .header-left .header-link {
+  font-size: 1.3rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .main .header .header-left .header-link {
+    transition: 0.2s;
+  }
+  .main .header .header-left .header-link:hover a {
+    color: lightgray;
+  }
+}
+.main .header .header-right .header-settings {
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+.main .content {
+  display: flex;
+  flex-direction: row;
+  padding: 4rem;
+  flex-grow: 1;
+}
+.main .footer {
+  background-color: rgb(10, 16, 28);
+  padding: 2rem 4rem;
+  color: white;
+  display: flex;
+  flex-direction: row;
+}
+.main .footer .footer-left {
+  margin-right: 5rem;
+}
+.main .footer .footer-left .footer-logo {
+  font-size: 2.5rem;
+  font-weight: 800;
+  user-select: none;
+  cursor: pointer;
+}
+.main .footer .footer-right {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main .footer .footer-right > :not(:last-child) {
+  margin-right: 5rem;
+}
+.main .footer .footer-right .footer-link {
+  font-size: 1.5rem;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .main .footer .footer-right .footer-link {
+    transition: 0.2s;
+  }
+  .main .footer .footer-right .footer-link:hover {
+    color: lightgray;
+  }
+}
+.main .footer .footer-right .footer-link.footer-github {
+  font-size: 3rem;
+  margin-bottom: -0.5rem;
+  margin-left: auto;
+}
+
+.confirmation-dialog {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.confirmation-dialog.visible {
+  display: flex;
+}
+.confirmation-dialog .confirmation-dialog-main {
+  padding: 1.5rem 2rem;
+  background-color: white;
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  width: min(80vw, 40rem);
+  min-height: 15rem;
+  border-radius: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.confirmation-dialog .confirmation-dialog-main .confirmation-dialog-title {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.confirmation-dialog .confirmation-dialog-main .confirmation-dialog-description {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-top: auto;
+}
+.confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom .confirmation-dialog-btn {
+  height: 3rem;
+  margin-left: 1rem;
+  padding: 0.6rem 0.8rem;
+  box-shadow: -0.3rem 0.3rem 0.5rem 0.1rem rgba(0, 0, 0, 0.304);
+  border-radius: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  box-sizing: border-box;
+  color: white;
+  font-weight: 600;
+}
+.confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom .confirmation-dialog-btn.btn-yes {
+  background-color: rgb(29, 157, 23);
+}
+@media (hover: hover) and (pointer: fine) {
+  .confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom .confirmation-dialog-btn.btn-yes {
+    transition: 0.2s;
+  }
+  .confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom .confirmation-dialog-btn.btn-yes:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}
+.confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom .confirmation-dialog-btn.btn-no {
+  background-color: #e3706e;
+}
+@media (hover: hover) and (pointer: fine) {
+  .confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom .confirmation-dialog-btn.btn-no {
+    transition: 0.2s;
+  }
+  .confirmation-dialog .confirmation-dialog-main .confirmation-dialog-bottom .confirmation-dialog-btn.btn-no:hover {
+    background-color: #c8413f;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 25rem;
+  max-width: 25rem;
+  color: white;
+  margin-left: 5rem;
+}
+.sidebar .sidebar-buttons-wrapper {
+  position: sticky;
+  top: 3rem;
+}
+.sidebar .sidebar-button {
+  padding: 1rem 0 1.2rem;
+  font-weight: 600;
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  user-select: none;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+}
+.sidebar .sidebar-button:not(:last-of-type) {
+  margin-bottom: 1rem;
+}
