@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+{% endblock header %}
+
+
+{% block content %}
+<div class="login-page">
+  <div class="login-form-wrapper">
+    <div class="login-form-title">Login</div>
+    {% if wrong_credentials %}
+    <div class="login-form-wrong-credentials">The username/email or password you entered are not correct.</div>
+    {% endif %}
+
+    <form method="post" class="login-form">
+      {% csrf_token %}
+
+      <label for="username_or_email">Username or email:</label>
+      <input name="username_or_email" class="login-form-input">
+
+      <label for="password">Password:</label>
+      <input type="password" name="password" class="login-form-input">
+      <a class="login-form-forgot-password" href="{% url 'forgot_password' %}">Forgot password?</a>
+
+      <div class="login-form-bottom">
+        <input type="submit" value="Login" class="login-form-submit">
+        <a class="login-form-signup" href="{% url 'signup' %}">No account? Sign Up</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
