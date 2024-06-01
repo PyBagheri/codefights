@@ -1,0 +1,78 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
+  color: white;
+}
+.info .game-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.info .game-docs {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+.info .game-docs code {
+  background-color: #000215;
+  border-radius: 0.5rem;
+}
+.info .game-template-list-label {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+.info .game-template-list {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.info .game-template-list a {
+  text-decoration: none;
+  color: white;
+}
+.info .game-template-list .game-template {
+  margin-bottom: 1rem;
+  background: #1a314b;
+  padding: 1.2rem 1.8rem;
+  border-radius: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .info .game-template-list .game-template {
+    transition: 0.2s;
+  }
+  .info .game-template-list .game-template:hover {
+    background-color: #102339;
+  }
+}
+.info .game-template-list .game-template .game-template-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+.info .game-template-list .game-template .game-template-title ion-icon {
+  margin-right: 0.5rem;
+  margin-bottom: -0.1rem;
+}
+.info .game-template-list .game-template .game-template-description {
+  font-size: 1.1rem;
+  overflow-y: hidden;
+}
+
+.sidebar .btn-new-fight {
+  background-color: rgb(29, 157, 23);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-new-fight {
+    transition: 0.2s;
+  }
+  .sidebar .btn-new-fight:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}

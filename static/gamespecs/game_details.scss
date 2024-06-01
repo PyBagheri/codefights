@@ -1,0 +1,112 @@
+.info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex-grow: 1;
+
+    color: white;
+
+    .game-title {
+        font-size: 3rem;
+        font-weight: 800;
+
+        margin-bottom: .5rem;
+    }
+
+    .game-docs {
+        font-size: 1.2rem;
+
+        margin-bottom: 2rem;
+
+        code {
+            background-color: #000215;
+            border-radius: .5rem;
+        }
+    }
+
+    .game-template-list-label {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .game-template-list {
+        display: flex;
+        flex-direction: column;
+
+        flex-wrap: wrap;
+
+        // > :not(:last-child) {
+        //     margin-right: 1rem;
+        // }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .game-template {
+            margin-bottom: 1rem;
+
+            background: #1a314b;
+
+            padding: 1.2rem 1.8rem;
+
+            border-radius: .3rem;
+
+            // max-width: 15rem;
+            // min-width: 15rem;
+
+            // min-height: 7rem;
+            // max-height: 7rem;
+
+            display: flex;
+            flex-direction: column;
+
+            user-select: none;
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    background-color: #102339;
+                }
+            }
+
+            .game-template-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: .5rem;
+
+                display: flex;
+                align-items: center;
+
+                ion-icon {
+                    margin-right: .5rem;
+                    margin-bottom: -.1rem;
+                }
+            }
+
+            .game-template-description {
+                font-size: 1.1rem;
+                overflow-y: hidden;
+            }
+        }
+    }
+}
+
+.sidebar {
+    .btn-new-fight {
+        background-color: rgb(29, 157, 23);
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                background-color: rgb(16, 128, 10);
+            }
+        }
+    }
+}

@@ -1,0 +1,64 @@
+.games-main {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+.games-main .games-label {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.games-main .games-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.games-main .games-list a {
+  text-decoration: none;
+  color: white;
+}
+.games-main .games-list > :not(:last-child) {
+  margin-right: 1rem;
+}
+.games-main .games-list .game-info {
+  margin-bottom: 1rem;
+  background: #3373b7;
+  padding: 1.2rem 1.8rem;
+  border-radius: 0.3rem;
+  max-width: 20rem;
+  min-width: 20rem;
+  min-height: 10rem;
+  max-height: 10rem;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  cursor: pointer;
+  box-shadow: -0.3rem 0.3rem 1rem 0.2rem rgba(0, 0, 0, 0.471);
+}
+@media (hover: hover) and (pointer: fine) {
+  .games-main .games-list .game-info {
+    transition: 0.2s;
+  }
+  .games-main .games-list .game-info:hover {
+    background-color: #215082;
+  }
+}
+.games-main .games-list .game-info .game-info-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.games-main .games-list .game-info .game-info-top .game-info-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.games-main .games-list .game-info .game-info-top .game-info-conclusion-system {
+  padding: 0.3rem 0.6rem;
+  background-color: #18487a;
+  border-radius: 0.3rem;
+}
+.games-main .games-list .game-info .game-info-description {
+  font-size: 1.2rem;
+  overflow-y: hidden;
+}
