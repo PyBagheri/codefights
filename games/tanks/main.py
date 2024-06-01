@@ -310,8 +310,17 @@ class Tanks(Game):
                 (tick, self.players_states[0], self.players_states[1])
             )
             
+            # Upon get_decision(), the player might have been terminated.
+            if len(self.players_alive) == 2:
+                player2 = self.players_alive[1]
+            else:
+                # If the other player died, then this will either
+                # be a draw or that the terminated player loses.
+                # To avoid an IndexError, we do this.
+                player2 = self.players_alive[0]
+            
             decision2 = self.get_decision(
-                self.players_alive[1],
+                player2,
                 DECIDE_FUNC_NAME,
                 (tick, self.players_states[1], self.players_states[0])
             )
@@ -322,14 +331,20 @@ class Tanks(Game):
             elif decision1 is None:  # player 1 eliminated
                 self.result = VictoryDrawResult.get_win_lose_list(
                     self.player_count,
-                    self.players_alive[1]
+                    self.players_alive[0]  # the only player remaining
                 )
+                lost_index = 0 if self.players_alive[0] == 1 else 1
+                self.players_states[lost_index]['health'] = 0
+                self.flow.append(deepcopy([list(i.values()) for i in self.players_states]))
                 return
             elif decision2 is None:  # player 2 eliminated
                 self.result = VictoryDrawResult.get_win_lose_list(
                     self.player_count,
-                    self.players_alive[0]
+                    self.players_alive[0]  # the only player remaining
                 )
+                lost_index = 0 if self.players_alive[0] == 1 else 1
+                self.players_states[lost_index]['health'] = 0
+                self.flow.append(deepcopy([list(i.values()) for i in self.players_states]))
                 return
             
             # Reset the one-off values.
