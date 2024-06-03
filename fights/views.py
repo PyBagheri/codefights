@@ -9,6 +9,7 @@ from fights.models import Fight, PlayerFight, Invitation, Hosting, TerminationRe
 from accounts.models import User
 from gamespecs.models import GameInfo
 
+from common.forms import BeforeAfterUUIDForm
 from fights.forms import (
     CreateFightForm,
     AcceptInvitationForm,
@@ -31,10 +32,133 @@ from games.frontend import EXPLANATION_INDEX
 ConclusionSystems = GameInfo.ConclusionSystems
 
 
+class BeforeAfterPaginator:
+    def __init__(self, *, items_queryset, selection_queryset=None, selection_field, orders, comparison_fields=None, items_per_page):
+        if selection_queryset is None:
+            selection_queryset = items_queryset
+        
+        # Each item in the comparison_fields must be an iterable
+        # of length 2, where the first item shows the field name
+        # and the second one indicates if we should include results
+        # when the value is equal too (i.e., use __gt/__lt or __gte/__lte).
+        if comparison_fields is None:
+            comparison_fields = []
+            for order in orders:
+                if order.startswith('-') or order.startswith('+'):
+                    comparison_fields.append((order[1:], False))
+                else:
+                    comparison_fields.append((order, False))
+        
+        self.comparison_fields = comparison_fields
+        
+        self.items_queryset = items_queryset
+        self.selection_queryset = selection_queryset
+        self.selection_field = selection_field
+        self.orders = orders
+        self.items_per_page = items_per_page
+    
+    def paginate(self, *, after=None, before=None):
+        if before and after:
+            raise Http404
+        
+        self.has_next_page = self.has_previous_page = False
+        
+        # Will be converted to list at some point.
+        items = self.items_queryset
+        
+        if after:
+            items = items.order_by(*self.orders).reverse()
+        else:
+            items = items.order_by(*self.orders)
+        
+        if before:
+            selected_item = self.selection_queryset.filter(
+                **{self.selection_field: before}
+            ).first()
+            
+            if not selected_item:
+                raise Http404
+            
+            filter_dict = {}
+            for field_name, count_equal in self.comparison_fields:
+                comparison_value = selected_item  # to be traversed
+                for attr in field_name.split('__'):
+                    comparison_value = getattr(comparison_value, attr)
+                
+                filter_dict[field_name + ('__lte' if count_equal else '__lt')] = comparison_value
+            
+            # TODO: Check if this is enough; In the case where we
+            # use a timestamp, maybe there is an overlap because, 
+            # for example, a fight finished at the same time as the
+            # fight we compare to its finished_at. If this wasn't
+            # enough, *maybe* compare the id's too.
+            items = items.filter(**filter_dict)
+
+            items = list(items[:self.items_per_page+1])
+            
+            if len(items) == self.items_per_page+1:
+                items = items[:-1]
+                self.page_last_item = items[-1]
+                self.has_next_page = True
+            
+            self.page_first_item = items[0]
+            self.has_previous_page = True
+        elif after:
+            selected_item = self.selection_queryset.filter(
+                **{self.selection_field: after}
+            ).first()
+            
+            if not selected_item:
+                raise Http404
+            
+            filter_dict = {}
+            for field_name, count_equal in self.comparison_fields:
+                comparison_value = selected_item  # to be traversed
+                for attr in field_name.split('__'):
+                    comparison_value = getattr(comparison_value, attr)
+                
+                filter_dict[field_name + ('__gte' if count_equal else '__gt')] = comparison_value
+            
+            
+            # TODO: Check if this is enough; In the case where we
+            # use a timestamp, maybe there is an overlap because, 
+            # for example, a fight finished at the same time as the
+            # fight we compare to its finished_at. If this wasn't
+            # enough, *maybe* compare the id's too.
+            items = items.filter(**filter_dict)
+            
+            # We want the reversal to happen in Python, not the DB, so we
+            # evaluate it by list(...) first.
+            items = list(reversed(list(items[:self.items_per_page+1])))
+            
+            if len(items) == self.items_per_page+1:
+                items = items[1:]
+                self.page_first_item = items[0]
+                self.has_previous_page = True
+                    
+            self.page_last_item = items[-1]
+            self.has_next_page = True
+        else:
+            items = list(items[:self.items_per_page+1])
+            
+            if len(items) == self.items_per_page+1:
+                items = items[:-1]
+                self.page_last_item = items[-1]
+                self.has_next_page = True
+        
+        self.items = items
+
+
 class PublicFightsView(TemplateView):
     template_name = 'public_fights.html'
+    items_per_page = 10
     
     def get_context_data(self, **kwargs):
+        ba_form = BeforeAfterUUIDForm(self.request.GET)
+        
+        if not ba_form.is_valid():
+            raise Http404
+        
         context = super().get_context_data(**kwargs)
         
         fights_list = Fight.public.finished().select_related('game').only(
@@ -45,11 +169,25 @@ class PublicFightsView(TemplateView):
             playerfight_fields=['won_or_rank'],
             user_fields=['username'],
             order_by='won_or_rank'  # only useful for rank-based games
-        ).order_by('-finished_at')
+        )
+        
+        paginator = BeforeAfterPaginator(
+            items_queryset=fights_list,
+            selection_queryset=Fight.public.finished().only('finished_at', 'uuid'),
+            selection_field='uuid',
+            orders=['-finished_at'],
+            items_per_page=self.items_per_page
+        )
+        
+        paginator.paginate(
+            before=ba_form.cleaned_data['before'],
+            after=ba_form.cleaned_data['after']
+        )
+        
         
         # TODO: Separating winners from losers or sorting by ranks
         # should be done in JS rather than templates or views.
-        for fight in fights_list:
+        for fight in paginator.items:
             # playerfights = PlayerFight.objects.filter(
             #     fight_id=fight.id
             # ).select_related('player').only('won_or_rank', 'player__username')
@@ -73,7 +211,8 @@ class PublicFightsView(TemplateView):
 
         
         context.update({
-            'fights_list': fights_list,
+            'paginator': paginator,
+            
             'ConclusionSystems': ConclusionSystems,
         })
         
@@ -345,10 +484,8 @@ class ViewFightView(TemplateView):
         else:
             condition = models.Q(is_public=True)
         
-        
         fight = Fight.objects.filter(            
             condition,
-            uuid=self.kwargs['uuid'],
         ).prefetch_playerfights_with_players(
             playerfight_fields=[
                 'won_or_rank',
@@ -379,7 +516,9 @@ class ViewFightView(TemplateView):
             'game__name',  # to access the explanation index
             'game__title',
             'game__conclusion_system',
-        ).first()
+        ).from_uuid(
+            self.kwargs['uuid']
+        )
         
         
         if not fight:
@@ -527,15 +666,15 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 class PlayerFightsView(LoginRequiredMixin, TemplateView):
     template_name = 'player_fights_list.html'
+    items_per_page = 10
         
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        ba_form = BeforeAfterUUIDForm(self.request.GET)
         
-        before_uuid = self.request.GET.get('before')
-        after_uuid = self.request.GET.get('after')
-        
-        if before_uuid and after_uuid:
+        if not ba_form.is_valid():
             raise Http404
+
+        context = super().get_context_data(**kwargs)
         
         past_playerfights = PlayerFight.objects.of_finished_fight().of_player(
             self.request.user
@@ -553,56 +692,30 @@ class PlayerFightsView(LoginRequiredMixin, TemplateView):
             'fight__game__slug',
             'fight__game__title',
             'fight__game__conclusion_system',
-        ).order_by('-fight__finished_at')
+        )
         
-        if before_uuid:
-            fight = Fight.objects.has_player(self.request.user).finished().filter(
-                uuid=before_uuid
-            ).only('finished_at').first()
-            
-            if not fight:
-                raise Http404
-            
-            past_playerfights = past_playerfights.filter(
-                # TODO: Check if this is enough; maybe there is
-                # an overlap because a fight finished at the same
-                # time as the fight compare to its finished_at.
-                # If this wasn't enough, compare the id's too.
-                fight__finished_at__lt=fight.finished_at
-            )
-        
-        if after_uuid:
-            fight = Fight.objects.has_player(self.request.user).finished().filter(
-                uuid=after_uuid
-            ).only('finished_at').first()
-            
-            if not fight:
-                raise Http404
-            
-            past_playerfights = past_playerfights.filter(
-                # TODO: Check if this is enough; maybe there is
-                # an overlap because a fight finished at the same
-                # time as the fight compare to its finished_at.
-                # If this wasn't enough, compare the id's too.
-                fight__finished_at__gt=fight.finished_at
-            )
-        
-        past_playerfights = past_playerfights[:6]
-        
-        if len(past_playerfights) == 6:
-            if before_uuid:
-                context.update(page_first_playerfight=past_playerfights[0])
-            else:
-                context.update(page_last_playerfight=past_playerfights[len(past_playerfights)-2])
-        elif past_playerfights:
-            if before_uuid:
-                context.update(page_first_playerfight=past_playerfights[0])
-            else:
-                context.update(page_last_playerfight=past_playerfights[len(past_playerfights)-1])
+        paginator = BeforeAfterPaginator(
+            items_queryset=past_playerfights,
+            selection_queryset=PlayerFight.objects.of_finished_fight().of_player(
+                self.request.user
+            ).select_related('fight').only(
+                # These fields will be used for comparison and selection
+                # in the paginator.
+                'fight__finished_at',
+                'fight__uuid'
+            ),
+            selection_field='fight__uuid',
+            orders=['-fight__finished_at'],
+            items_per_page=self.items_per_page
+        )
 
+        paginator.paginate(
+            before=ba_form.cleaned_data['before'],
+            after=ba_form.cleaned_data['after']
+        )
 
         context.update({
-            'past_playerfights': past_playerfights[:5],
+            'paginator': paginator,
             
             'ConclusionSystems': ConclusionSystems,
         })
@@ -611,10 +724,17 @@ class PlayerFightsView(LoginRequiredMixin, TemplateView):
         return context
 
 
+
 class InvitationsListView(TemplateView):
     template_name = 'invitations_list.html'
+    items_per_page = 10
         
     def get_context_data(self, **kwargs):
+        ba_form = BeforeAfterUUIDForm(self.request.GET)
+        
+        if not ba_form.is_valid():
+            raise Http404
+        
         context = super().get_context_data(**kwargs)
         
         invitations = Invitation.objects.of_target(
@@ -635,13 +755,34 @@ class InvitationsListView(TemplateView):
             
             'hosting__fight__game__slug',
             'hosting__fight__game__title',
-        ).order_by('-is_accepted', '-hosting__fight__created_at')[:5]
+        )
+        
+        paginator = BeforeAfterPaginator(
+            items_queryset=invitations,
+            selection_queryset=Invitation.objects.of_target(
+                self.request.user
+            ).select_related('hosting__fight').only(
+                'uuid',  # for before/after selection
+                'hosting__fight__created_at'  # for before/after comparison
+            ),
+            selection_field='uuid',
+            orders=['-is_accepted', '-hosting__fight__created_at'],
+            comparison_fields=[
+                ('is_accepted', True),
+                ('hosting__fight__created_at', False)
+            ],
+            items_per_page=self.items_per_page
+        )
+
+        paginator.paginate(
+            before=ba_form.cleaned_data['before'],
+            after=ba_form.cleaned_data['after']
+        )
         
         context.update({
-            'invitations': invitations,
+            'paginator': paginator,
             
             'ConclusionSystems': ConclusionSystems,
         })
         
         return context
-

@@ -4,10 +4,11 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from common.values import TerminationReasons
 
-from gamespecs.models import GameInfo, GameResult
+from gamespecs.models import GameInfo
 from accounts.models import User
 
 import uuid
@@ -44,6 +45,12 @@ class FightQuerySet(models.QuerySet):
         # condition we'd get duplicate rows (as there are multiple
         # players per fight).
         return self.filter(players__in=[player])
+    
+    def from_uuid(self, uuid):
+        try:
+            return self.filter(uuid=uuid).first()
+        except ValidationError:
+            return self.none()
     
     def prefetch_players(self, *, user_fields=None):
         players_queryset = User.objects.all()
@@ -195,7 +202,7 @@ class Fight(models.Model):
         else:
             title = 'Finished'
         
-        return f'{self.game.title} ({title})' + (' [Public]' if self.is_public else '')
+        return f'{self.id}. {self.game.title} ({title})' + (' [Public]' if self.is_public else '')
     
     objects = models.Manager.from_queryset(FightQuerySet)()
     public = PublicFightsManager.from_queryset(FightQuerySet)()
@@ -342,7 +349,7 @@ class PlayerFight(models.Model):
     won_or_rank = models.IntegerField(blank=True, null=True)
     
     def __str__(self):       
-        return f'{self.fight.game.title} (@{self.player.username})'
+        return f'{self.id}. {self.fight.game.title} (@{self.player.username})'
     
     objects = models.Manager.from_queryset(PlayerFightQuerySet)()
     
@@ -453,14 +460,17 @@ class Hosting(models.Model):
         }
     
     def __str__(self):       
-        return f'@{self.host.username} hosting {self.invitation_set.count()} players ({self.fight.game.title})'
+        return f'{self.id}. @{self.host.username} hosting {self.invitation_set.count()} players ({self.fight.game.title})'
     
     objects = models.Manager.from_queryset(HostingQuerySet)()
 
 
 class FilteredInvitationQuerySet(models.QuerySet):
     def from_uuid_and_target(self, *, uuid, target):
-        return self.filter(uuid=uuid, target=target).first()
+        try:
+            return self.filter(uuid=uuid, target=target).first()
+        except ValidationError:
+            return self.none()
     
     def of_fight(self, fight=None, *, fight_id=None):
         if fight_id is None:
@@ -590,7 +600,7 @@ class Invitation(models.Model):
         return reverse('view_invitation', kwargs={'uuid': self.uuid.hex})
     
     def __str__(self):       
-        return f'@{self.target.username} invited by @{self.hosting.host.username} ({self.hosting.fight.game.title})'
+        return f'{self.id}. @{self.target.username} invited by @{self.hosting.host.username} ({self.hosting.fight.game.title})'
     
     objects = models.Manager.from_queryset(InvitationQuerySet)()
     accepted = AcceptedInvitationsManager.from_queryset(FilteredInvitationQuerySet)()

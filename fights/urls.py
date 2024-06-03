@@ -10,7 +10,7 @@ from fights.views import (
     CancelFightAttendanceView,
     ViewFightView,
     PlayerFightsView,
-    InvitationsListView,
+    InvitationsListView
 )
 from fights.apis import SearchPlayerToInviteAPIView
 
