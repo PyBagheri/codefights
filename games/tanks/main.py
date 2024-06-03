@@ -328,24 +328,14 @@ class Tanks(Game):
             if decision1 is None and decision2 is None:
                 self.result = VictoryDrawResult.DRAW
                 return
-            elif decision1 is None:  # player 1 eliminated
+            elif decision1 is None or decision2 is None:  # player 1 or 2 eliminated
                 self.result = VictoryDrawResult.get_win_lose_list(
                     self.player_count,
                     self.players_alive[0]  # the only player remaining
                 )
                 lost_index = 0 if self.players_alive[0] == 1 else 1
                 self.players_states[lost_index]['health'] = 0
-                self.flow.append(deepcopy([list(i.values()) for i in self.players_states]))
-                return
-            elif decision2 is None:  # player 2 eliminated
-                self.result = VictoryDrawResult.get_win_lose_list(
-                    self.player_count,
-                    self.players_alive[0]  # the only player remaining
-                )
-                lost_index = 0 if self.players_alive[0] == 1 else 1
-                self.players_states[lost_index]['health'] = 0
-                self.flow.append(deepcopy([list(i.values()) for i in self.players_states]))
-                return
+                break
             
             # Reset the one-off values.
             for pi in self.players_alive:
