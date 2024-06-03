@@ -64,7 +64,7 @@ class GameInfo(models.Model):
     # can also specify the default for each setting key.
     
     def __str__(self):
-        return self.title
+        return f'{self.id}. {self.title}'
     
     objects = models.Manager.from_queryset(GameInfoQuerySet)()
 
@@ -86,7 +86,7 @@ class GameTemplate(models.Model):
     description = models.CharField(max_length=120)
     
     def __str__(self):       
-        return f'{self.game.title} : {self.title}'
+        return f'{self.id}. {self.game.title} : {self.title}'
     
 
 
