@@ -12,6 +12,8 @@ from django.core.validators import EmailValidator
 from django.utils import timezone
 from datetime import timedelta
 
+from django.urls import reverse
+
 import uuid
 
 
@@ -80,7 +82,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
         self.save()
     
     def __str__(self):
-        return self.username
+        return f'{self.id}. {self.username}'
     
     class Meta:
         constraints = [
@@ -88,6 +90,15 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
             # are saved as given.
             UniqueConstraint(Lower('username'), name='unique_lower_username')
         ]
+
+
+class EmailVerificationQuerySet(models.QuerySet):
+    def from_uuid(self, uuid):
+        try:
+            return self.filter(uuid=uuid).first()
+        except ValidationError:
+            return self.none()
+    
 
 
 class ValidEmailVerificationManager(models.Manager):
@@ -119,8 +130,12 @@ class EmailVerification(models.Model):
     
     expires_at = models.DateTimeField(default=get_email_verification_expiry)
     
-    def __str__(self):
-        return f'{self.get_verification_type_display()} (@{self.user.username}) until {self.expires_at.strftime("%Y/%m/%d %H:%M:%S")}'
+    def get_absolute_url(self):
+        return reverse('verify_email', kwargs={'uuid': self.uuid.hex})
     
-    objects = models.Manager()
-    valid = ValidEmailVerificationManager()
+    
+    def __str__(self):
+        return f'{self.id}. {self.get_verification_type_display()} (@{self.user.username}) until {self.expires_at.strftime("%Y/%m/%d %H:%M:%S")}'
+    
+    objects = models.Manager.from_queryset(EmailVerificationQuerySet)()
+    valid = ValidEmailVerificationManager.from_queryset(EmailVerificationQuerySet)()

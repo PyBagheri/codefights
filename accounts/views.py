@@ -185,9 +185,9 @@ class VerifyEmailView(View):
 
     
     def get_email_verification_or_404(self):
-        v = EmailVerification.valid.select_for_update().filter(
-            uuid=self.kwargs['uuid']
-        ).first()
+        v = EmailVerification.valid.select_for_update().from_uuid(
+            self.kwargs['uuid']
+        )
         
         if not v:
             raise Http404

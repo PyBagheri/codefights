@@ -10,5 +10,5 @@ urlpatterns = [
     
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot_password'),
     
-    path('verify-email/<slug:uuid>/', VerifyEmailView.as_view(), name='verify-email'),
+    path('verify-email/<slug:uuid>/', VerifyEmailView.as_view(), name='verify_email'),
 ]

@@ -1,5 +1,7 @@
-from accounts.models import User, EmailVerification
 from django.db import models
+from django.core.mail import send_mail
+
+from accounts.models import User, EmailVerification
 
 
 class CheckUserUsernameAndEmailFree:
@@ -53,8 +55,15 @@ class CreateInitialEmailVerificationService:
         )
         
         if send_email:
-            self.user.email
-            v.uuid.hex
+            message = f'Verify your email address by opening this link: {v.get_absolute_url()}'
+            
+            send_mail(
+                subject='Verify your email address',
+                message=message,
+                from_email=None,
+                recipient_list=[self.user.email],
+                fail_silently=True
+            )
 
 
 class CreatePasswordRecoveryEmailVerificationService:
@@ -81,8 +90,15 @@ class CreatePasswordRecoveryEmailVerificationService:
         )
         
         if send_email:
-            v.user.email
-            v.uuid.hex
+            message = f'Opening this link to reset your password: {v.get_absolute_url()}'
+            
+            send_mail(
+                subject='Reset password',
+                message=message,
+                from_email=None,
+                recipient_list=[user.email],
+                fail_silently=True
+            )
 
         return CreatePasswordRecoveryEmailVerificationService.SUCCESS
 
