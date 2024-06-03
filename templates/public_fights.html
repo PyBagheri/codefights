@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}...{% endblock title %}
+{% block title %}Public Fights | Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'fights/public_fights.css' %}">
@@ -11,7 +11,7 @@
 <div class="info">
     <div class="info-label">Public Fights</div>
     <div class="info-fight-list">
-        {% for fight in fights_list %}
+        {% for fight in paginator.items %}
         <div class="info-fight">
             <div class="info-fight-center">
                 <div class="info-fight-center-top">
@@ -56,11 +56,19 @@
         </div>
         {% endfor %}
     </div>
-</div>
-<div class="sidebar">
-    <div class="sidebar-buttons-wrapper">
-        <a class="sidebar-button btn-view-games">View Games</a>
+    <div class="info-buttons">
+        {% if paginator.has_next_page %}
+        <a class="info-btn info-next-btn" href="?before={{ paginator.page_last_item.uuid.hex }}">NEXT PAGE</a>
+        {% endif %}
+        {% if paginator.has_previous_page %}
+        <a class="info-btn info-previous-btn" href="?after={{ paginator.page_first_item.uuid.hex }}">PREVIOUS PAGE</a>
+        {% endif %}
     </div>
 </div>
 {% endblock content %}
+
+
+{% block sidebar_sticky %}
+<a class="sidebar-button btn-view-games" href="{% url 'games_list' %}">View Games</a>
+{% endblock %}
 

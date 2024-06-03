@@ -95,6 +95,9 @@ html, body {
                 user-select: none;
                 cursor: pointer;
 
+                text-decoration: none;
+                color: white;
+
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -102,10 +105,32 @@ html, body {
 
                 font-size: 1.5rem;
             }
+
+            .header-button {
+                font-size: 1.3rem;
+
+                user-select: none;
+                cursor: pointer;
+
+                text-decoration: none;
+                color: white;
+
+                @media (hover: hover) and (pointer: fine) {
+                    transition: .2s;
+        
+                    &:hover {
+                        color: lightgray;
+                    }
+                }
+
+                &:not(:last-of-type) {
+                    margin-right: 1.5rem;
+                }
+            }
         }
     }
 
-    .content {
+    .middle {
         // background: rgb(0, 2, 32);
         // background: rgb(33, 33, 41);
         // background: rgb(19, 46, 89);
@@ -114,7 +139,7 @@ html, body {
         display: flex;
         flex-direction: row;
 
-        padding: $sides-padding;
+        // padding: $sides-padding;
 
         flex-grow: 1;
     }
@@ -137,6 +162,9 @@ html, body {
 
                 user-select: none;
                 cursor: pointer;
+
+                color: white;
+                text-decoration: none;
             }
 
             margin-right: 5rem;
@@ -159,6 +187,9 @@ html, body {
 
                 user-select: none;
                 cursor: pointer;
+                
+                color: white;
+                text-decoration: none;
 
                 @media (hover: hover) and (pointer: fine) {
                     transition: .2s;
@@ -294,21 +325,32 @@ html, body {
     }
 }
 
+.content {
+    flex-grow: 1;
+
+    padding: $sides-padding;
+}
+
 .sidebar {
     display: flex;
     flex-direction: column;
 
     // width: 300px;
 
-    flex-basis: 25rem;
-    max-width: 25rem;
+    padding: $sides-padding;
+    background-color: #31488f2b;
+
+    box-sizing: border-box;
+
+    flex-basis: 32rem;
+    max-width: 32rem;
 
 
     // margin: 20px;
 
     color: white;
 
-    margin-left: 5rem;
+    // margin-left: 5rem;
 
     // padding: 1.5rem 1.8rem;
 
@@ -318,7 +360,7 @@ html, body {
 
     // border-radius: 10px;
 
-    .sidebar-buttons-wrapper {
+    .sidebar-sticky-wrapper {
         position: sticky;
         top: 3rem;
     }

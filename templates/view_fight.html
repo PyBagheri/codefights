@@ -2,7 +2,7 @@
 {% load static %}
 {% load game_tags %}
 
-{% block title %}...{% endblock title %}
+{% block title %}Fight: {{ fight.game.title }} | Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'fights/view_fight.css' %}">
@@ -42,32 +42,32 @@
     </div>
     {% endif %}
 </div>
-<div class="sidebar">
-    {% comment %} TODO: Showing scores for games that have scoring {% endcomment %}
-    <div class="sidebar-players-wrapper">
-        {% for playerfight in fight.playerfight_set.all %}
-        <div class="sidebar-player">
-            <div class="sidebar-player-color" data-player-index="{{ forloop.counter }}"></div>
-            <div class="sidebar-player-title">@{{ playerfight.player.username }}</div>
-            <div class="sidebar-player-state">
-                {% if playerfight.won_or_rank is None %}
-                <span class="draw">D</span>
-                {% elif fight.game.conclusion_system == ConclusionSystems.VICTORY_DRAW %}
-                    {% if playerfight.won_or_rank == 0 %}
-                    <span class="lost">L</span>
-                    {% else %}
-                    <span class="won">W</span>
-                    {% endif %}
-                {% elif fight.game.conclusion_system == ConclusionSystems.RANK_BASED %}
-                {{ playerfight.won_or_rank }}
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
+{% endblock content %}
+
+
+{% block sidebar_sticky %}
+{% comment %} TODO: Showing scores for games that have scoring {% endcomment %}
+{% for playerfight in fight.playerfight_set.all %}
+<div class="sidebar-player">
+    <div class="sidebar-player-color" data-player-index="{{ forloop.counter }}"></div>
+    <div class="sidebar-player-title">@{{ playerfight.player.username }}</div>
+    <div class="sidebar-player-state">
+        {% if playerfight.won_or_rank is None %}
+        <span class="draw">D</span>
+        {% elif fight.game.conclusion_system == ConclusionSystems.VICTORY_DRAW %}
+            {% if playerfight.won_or_rank == 0 %}
+            <span class="lost">L</span>
+            {% else %}
+            <span class="won">W</span>
+            {% endif %}
+        {% elif fight.game.conclusion_system == ConclusionSystems.RANK_BASED %}
+        {{ playerfight.won_or_rank }}
+        {% endif %}
     </div>
 </div>
+{% endfor %}
+{% endblock %}
 
-{% endblock content %}
 
 {% block scripts %}
 <script src="{% game_static fight.game.name 'js' %}"></script>

@@ -94,11 +94,7 @@
   }
 }
 
-.sidebar .sidebar-players-wrapper {
-  position: sticky;
-  top: 5rem;
-}
-.sidebar .sidebar-players-wrapper .sidebar-player {
+.sidebar .sidebar-player {
   box-shadow: -0.1rem 0.1rem 0.5rem 0.1rem rgba(0, 0, 0, 0.123);
   display: flex;
   flex-direction: row;
@@ -109,23 +105,23 @@
   position: relative;
   overflow-y: hidden;
 }
-.sidebar .sidebar-players-wrapper .sidebar-player:not(:last-of-type) {
+.sidebar .sidebar-player:not(:last-of-type) {
   margin-bottom: 1rem;
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-color {
+.sidebar .sidebar-player .sidebar-player-color {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: 0.3rem;
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-color[data-player-index="1"] {
+.sidebar .sidebar-player .sidebar-player-color[data-player-index="1"] {
   background-color: rgb(255, 105, 105);
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-color[data-player-index="2"] {
+.sidebar .sidebar-player .sidebar-player-color[data-player-index="2"] {
   background-color: rgb(91, 147, 255);
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state {
+.sidebar .sidebar-player .sidebar-player-state {
   width: 1.5rem;
   text-align: center;
   font-weight: 800;
@@ -133,26 +129,26 @@
   padding-left: 1rem;
   user-select: none;
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state .won {
+.sidebar .sidebar-player .sidebar-player-state .won {
   color: greenyellow;
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state .lost {
+.sidebar .sidebar-player .sidebar-player-state .lost {
   color: rgb(255, 175, 175);
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-state .draw {
+.sidebar .sidebar-player .sidebar-player-state .draw {
   color: gray;
 }
-.sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-title {
+.sidebar .sidebar-player .sidebar-player-title {
   user-select: none;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 @media (hover: hover) and (pointer: fine) {
-  .sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-title {
+  .sidebar .sidebar-player .sidebar-player-title {
     transition: 0.2s;
   }
-  .sidebar .sidebar-players-wrapper .sidebar-player .sidebar-player-title:hover {
+  .sidebar .sidebar-player .sidebar-player-title:hover {
     color: rgb(207, 207, 207);
   }
 }

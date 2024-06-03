@@ -152,89 +152,84 @@
 }
 
 .sidebar {
-    .sidebar-players-wrapper {
-        position: sticky;
-        top: 5rem;
+    .sidebar-player {
+        box-shadow: -.1rem .1rem .5rem .1rem rgba(0, 0, 0, 0.123);
 
-        .sidebar-player {
-            box-shadow: -.1rem .1rem .5rem .1rem rgba(0, 0, 0, 0.123);
+        display: flex;
+        flex-direction: row;
 
-            display: flex;
-            flex-direction: row;
+        padding: .8rem 1.3rem;
 
-            padding: .8rem 1.3rem;
+        border-radius: .5rem;
 
-            border-radius: .5rem;
+        background: rgba(0, 0, 0, 0.304);
 
-            background: rgba(0, 0, 0, 0.304);
+        font-size: 1.5rem;
 
-            font-size: 1.5rem;
+        &:not(:last-of-type) {
+            margin-bottom: 1rem;
+        }
 
-            &:not(:last-of-type) {
-                margin-bottom: 1rem;
+        position: relative;
+        overflow-y: hidden;
+
+        .sidebar-player-color {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: .3rem;
+
+            &[data-player-index="1"] {
+                background-color: rgb(255, 105, 105);
             }
 
-            position: relative;
-            overflow-y: hidden;
-
-            .sidebar-player-color {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                width: .3rem;
-
-                &[data-player-index="1"] {
-                    background-color: rgb(255, 105, 105);
-                }
-
-                &[data-player-index="2"] {
-                    background-color: rgb(91, 147, 255);
-                }
-
-                // MORE COLORS TO BE ADDED LATER FOR
-                // GAMES THAT HAVE MORE PLAYERS. NOTE
-                // THAT THE INDICES START FROM 1.
+            &[data-player-index="2"] {
+                background-color: rgb(91, 147, 255);
             }
 
-            .sidebar-player-state {
-                // margin-right: 1.5rem;
-                width: 1.5rem;
-                text-align: center;
-                font-weight: 800;
+            // MORE COLORS TO BE ADDED LATER FOR
+            // GAMES THAT HAVE MORE PLAYERS. NOTE
+            // THAT THE INDICES START FROM 1.
+        }
 
-                margin-left: auto;
-                padding-left: 1rem;
+        .sidebar-player-state {
+            // margin-right: 1.5rem;
+            width: 1.5rem;
+            text-align: center;
+            font-weight: 800;
 
-                user-select: none;
+            margin-left: auto;
+            padding-left: 1rem;
 
-                .won {
-                    color: greenyellow;
-                }
+            user-select: none;
 
-                .lost {
-                    color: rgb(255, 175, 175);
-                }
-
-                .draw {
-                    color: gray;
-                }
+            .won {
+                color: greenyellow;
             }
 
-            .sidebar-player-title {
-                user-select: none;
-                cursor: pointer;
+            .lost {
+                color: rgb(255, 175, 175);
+            }
 
-                overflow: hidden;
-                text-overflow: ellipsis;
+            .draw {
+                color: gray;
+            }
+        }
+
+        .sidebar-player-title {
+            user-select: none;
+            cursor: pointer;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
 
 
-                @media (hover: hover) and (pointer: fine) {
-                    transition: .2s;
-        
-                    &:hover {
-                        color: rgb(207, 207, 207);
-                    }
+            @media (hover: hover) and (pointer: fine) {
+                transition: .2s;
+    
+                &:hover {
+                    color: rgb(207, 207, 207);
                 }
             }
         }

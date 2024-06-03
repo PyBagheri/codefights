@@ -34,15 +34,7 @@
             <div class="content">
                 {% block content %}{% endblock content %}
             </div>
-            <div class="sidebar">
-                <div class="sidebar-sticky-wrapper">
-                    {% block sidebar_sticky %}{% endblock %}
-                    {% comment %} <a class="sidebar-button btn-view-games" href="{% url 'games_list' %}">View Games</a> {% endcomment %}
-                </div>
-                {% block sidebar_extras %}{% endblock %}
-            </div>
         </div>
-
         <div class="footer">
             <div class="footer-left">
                 <a class="footer-logo" href="{% url 'dashboard' %}">Codefights</a>

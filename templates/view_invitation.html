@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}...{% endblock title %}
+{% block title %}Invitation from {{ invitation.hosting.host.username }} for {{ invitation.hosting.fight.game.title }} | Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'fights/view_invitation.css' %}">
@@ -50,19 +50,20 @@
     </div>
     {% endif %}
 </div>
-<div class="sidebar">
-    <div class="sidebar-buttons-wrapper">
-        {% if invitation.is_accepted %}
-        <div class="sidebar-button btn-cancel-attendance post-confirm-dialog-button" data-post-url="{% url 'api_cancel_attendance' invitation.uuid %}" data-dialog-title="Cancel your attendance?">Cancel Attendance</div>
-        {% else %}
-        {% if not attended_fights_full %}
-        <div class="sidebar-button btn-attend-fight">Attend Fight</div>
-        {% endif %}
-        <div class="sidebar-button btn-dismiss-invitation post-confirm-dialog-button" data-post-url="{% url 'api_dismiss_invitation' invitation.uuid %}" data-dialog-title="Dismiss this invitation?">Dismiss Invitation</div>
-        {% endif %}
-    </div>
-</div>
 {% endblock content %}
+
+
+{% block sidebar_sticky %}
+{% if invitation.is_accepted %}
+<div class="sidebar-button btn-cancel-attendance post-confirm-dialog-button" data-post-url="{% url 'api_cancel_attendance' invitation.uuid %}" data-dialog-title="Cancel your attendance?">Cancel Attendance</div>
+{% else %}
+{% if not attended_fights_full %}
+<div class="sidebar-button btn-attend-fight">Attend Fight</div>
+{% endif %}
+<div class="sidebar-button btn-dismiss-invitation post-confirm-dialog-button" data-post-url="{% url 'api_dismiss_invitation' invitation.uuid %}" data-dialog-title="Dismiss this invitation?">Dismiss Invitation</div>
+{% endif %}
+{% endblock %}
+
 
 {% block scripts %}
 <script>

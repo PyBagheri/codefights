@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}...{% endblock title %}
+{% block title %}Create New Fight: {{ game_info.title }} | Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'fights/create_fight.css' %}">
@@ -54,13 +54,16 @@
         </div>
     </form>
 </div>
-<div class="sidebar">
-    <div class="sidebar-buttons-wrapper">
-        <div class="sidebar-button btn-send-invitations">Send Invitations</div>
-    </div>
-</div>
 {% endif %}
 {% endblock content %}
+
+
+{% block sidebar_sticky %}
+{% if not attended_fights_full %}
+<div class="sidebar-button btn-send-invitations">Send Invitations</div>
+{% endif %}
+{% endblock %}
+
 
 {% block scripts %}
 <script>

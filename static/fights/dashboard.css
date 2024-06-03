@@ -5,19 +5,25 @@
   flex-grow: 1;
   color: white;
 }
-.info .info-view-all-fights {
+.info .info-view-all {
   text-decoration: none;
+  user-select: none;
+  cursor: pointer;
   color: rgb(188, 199, 255);
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  margin-top: 1rem;
+  margin-top: 0.3rem;
+  margin-left: 2rem;
+  padding: 0.3rem 0.5rem;
+  background-color: rgb(25, 25, 60);
+  border-radius: 0.4rem;
 }
 @media (hover: hover) and (pointer: fine) {
-  .info .info-view-all-fights {
+  .info .info-view-all {
     transition: 0.2s;
   }
-  .info .info-view-all-fights:hover {
-    color: rgb(121, 143, 255);
+  .info .info-view-all:hover {
+    background-color: rgb(14, 14, 38);
   }
 }
 .info > *:not(:last-child) {
@@ -25,6 +31,9 @@
 }
 .info .info-label {
   font-size: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .info .info-label:not(:first-of-type) {
   margin-top: 1.5rem;

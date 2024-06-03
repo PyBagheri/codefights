@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}...{% endblock title %}
+{% block title %}Dashboard | Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'fights/dashboard.css' %}">
@@ -77,8 +77,7 @@
     </div>
     {% endfor %}
     {% if invitations %}
-    <div class="info-label">Invitations</div>
-    {% endif %}
+    <div class="info-label">Invitations<a href="{% url 'invitations_list' %}" class="info-view-all">View All</a></div>
     {% for invitation in invitations %}
     <div class="info-pending-fight">
         <div class="info-pending-fight-left">
@@ -109,8 +108,10 @@
         </div>
     </div>
     {% endfor %}
+    {% endif %}
+
     {% if past_playerfights %}
-    <div class="info-label">Fights History</div>
+    <div class="info-label">Fights History<a href="{% url 'player_fights_list' %}" class="info-view-all">View All</a></div>
     <div class="info-fight-list">
         {% for playerfight in past_playerfights %}
         <div class="info-fight">
@@ -156,15 +157,15 @@
         </div>
         {% endfor %}
     </div>
-    <a href="{% url 'player_fights_list' %}" class="info-view-all-fights">View all Fights</a>
     {% endif %}
 </div>
-<div class="sidebar">
-    <div class="sidebar-buttons-wrapper">
-        <div class="sidebar-button btn-view-games">View Games</div>
-    </div>
-</div>
 {% endblock content %}
+
+
+{% block sidebar_sticky %}
+<a class="sidebar-button btn-view-games" href="{% url 'games_list' %}">View Games</a>
+{% endblock %}
+
 
 {% block scripts %}
 <script>

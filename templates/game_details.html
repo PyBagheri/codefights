@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}...{% endblock title %}
+{% block title %}{{ game_info.title }} | Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
@@ -25,13 +25,13 @@
         {% endfor %}
     </div>
 </div>
-<div class="sidebar">
-    <div class="sidebar-buttons-wrapper">
-        <a class="sidebar-button btn-new-fight" href="{% url 'create_fight' game_info.name %}">New Fight</a>
-    </div>
-</div>
-
 {% endblock content %}
+
+
+{% block sidebar_sticky %}
+<a class="sidebar-button btn-new-fight" href="{% url 'create_fight' game_info.name %}">New Fight</a>
+{% endblock %}
+
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>

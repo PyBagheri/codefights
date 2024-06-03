@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}...{% endblock title %}
+{% block title %}Fights History | Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'fights/player_fights_list.css' %}">
@@ -9,10 +9,12 @@
 
 {% block content %}
 <div class="info">
-    {% if past_playerfights %}
+    {% comment %} {% if past_playerfights %} {% endcomment %}
+    {% if paginator.items %}
     <div class="info-label">Fights History</div>
     <div class="info-fight-list">
-        {% for playerfight in past_playerfights %}
+        {% comment %} {% for playerfight in past_playerfights %} {% endcomment %}
+        {% for playerfight in paginator.items %}
         <div class="info-fight">
             <div class="info-fight-left">
                 <div class="info-fight-game-result">
@@ -57,20 +59,23 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="info-label">No more fights ...</div>
+    <div class="info-label">No fights ...</div>
     {% endif %}
     <div class="info-buttons">
-        {% if page_last_playerfight %}
-        <a class="info-btn info-next-btn" href="?before={{ page_last_playerfight.fight.uuid.hex }}">NEXT PAGE</a>
+        {% if paginator.has_next_page %}
+        <a class="info-btn info-next-btn" href="?before={{ paginator.page_last_item.fight.uuid.hex }}">NEXT PAGE</a>
         {% endif %}
-        {% if page_first_playerfight %}
-        <a class="info-btn info-previous-btn" href="?after={{ page_first_playerfight.fight.uuid.hex }}">PREVIOUS PAGE</a>
+        {% if paginator.has_previous_page %}
+        <a class="info-btn info-previous-btn" href="?after={{ paginator.page_first_item.fight.uuid.hex }}">PREVIOUS PAGE</a>
         {% endif %}
-    </div>
-</div>
-<div class="sidebar">
-    <div class="sidebar-buttons-wrapper">
-        <div class="sidebar-button btn-view-games">View Games</div>
     </div>
 </div>
 {% endblock content %}
+
+
+{% block sidebar_sticky %}
+<a class="sidebar-button btn-view-games" href="{% url 'games_list' %}">View Games</a>
+{% endblock %}
+
+
+
