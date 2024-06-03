@@ -13,6 +13,10 @@ ALLOWED_HOSTS = []
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8001']
 
 
+# Relative to the website's main domain.
+ADMIN_URL = 'admin/'
+
+
 POSTGRES = {
     'DATABASE_NAME': 'codefights',
     'USER': 'postgres',
@@ -38,6 +42,9 @@ MEDIA_ROOT = '/srv/codefights/'
 FIGHT_CODES_DIR = 'fights/'
 PRESET_CODES_DIR = 'presets/'
 TEMPLATE_CODES_DIR = 'templates/'
+
+
+DEFAULT_FROM_EMAIL = 'test@dev.com'
 
 
 

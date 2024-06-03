@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
 
 from pages.views import Handler404, Handler500
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(settings.ADMIN_URL, admin.site.urls),
     path('', include('pages.urls')),
     path('games/', include('gamespecs.urls')),
     path('fights/', include('fights.urls')),

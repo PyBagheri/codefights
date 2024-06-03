@@ -57,6 +57,9 @@ ALLOWED_HOSTS = global_config.ALLOWED_HOSTS
 CSRF_TRUSTED_ORIGINS = global_config.CSRF_TRUSTED_ORIGINS
 
 
+ADMIN_URL = global_config.ADMIN_URL
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -151,6 +154,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+
+DEFAULT_FROM_EMAIL = global_config.DEFAULT_FROM_EMAIL
 
 
 # Minutes until the verification link sent to the email is expired.
