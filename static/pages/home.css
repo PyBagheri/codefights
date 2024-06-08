@@ -1,0 +1,44 @@
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
+  color: white;
+}
+.info .home-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.info .home-text {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+.info .home-text code {
+  background-color: #000215;
+  border-radius: 0.5rem;
+}
+
+.sidebar .btn-signup {
+  background-color: rgb(29, 157, 23);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-signup {
+    transition: 0.2s;
+  }
+  .sidebar .btn-signup:hover {
+    background-color: rgb(16, 128, 10);
+  }
+}
+.sidebar .btn-login {
+  background-color: transparent;
+  box-shadow: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar .btn-login {
+    transition: 0.2s;
+  }
+  .sidebar .btn-login:hover {
+    color: rgb(143, 143, 143);
+  }
+}

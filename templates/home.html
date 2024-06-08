@@ -1,22 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Guide | Codefights{% endblock title %}
+{% block title %}Codefights{% endblock title %}
 
 {% block header %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
-<link rel="stylesheet" href="{% static 'pages/guide.css' %}">
+<link rel="stylesheet" href="{% static 'pages/home.css' %}">
 {% endblock header %}
 
 {% block content %}
 <div class="info">
-    <div class="guide-title">Guide</div>
-    <div class="guide-text">{{ content }}</div>
+    <div class="home-title">Let the codes fight</div>
+    <div class="home-text">{{ content }}</div>
 </div>
 {% endblock content %}
 
 {% block sidebar_sticky %}
-<a class="sidebar-button btn-view-games" href="{% url 'games_list' %}">View Games</a>
+<a class="sidebar-button btn-signup" href="{% url 'signup' %}">Create an Account</a>
+<a class="sidebar-button btn-login" href="{% url 'login' %}">Log In</a>
 {% endblock %}
 
 {% block scripts %}
@@ -26,5 +27,5 @@
 <script>
     const {markedHighlight} = globalThis.markedHighlight;
 </script>
-<script src="{% static 'pages/guide.js' %}"></script>
+<script src="{% static 'pages/home.js' %}"></script>
 {% endblock scripts %}

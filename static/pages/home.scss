@@ -1,0 +1,55 @@
+.info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    flex-grow: 1;
+
+    color: white;
+
+    .home-title {
+        font-size: 3rem;
+        font-weight: 800;
+
+        margin-bottom: .5rem;
+    }
+
+    .home-text {
+        font-size: 1.2rem;
+
+        margin-bottom: 2rem;
+
+        code {
+            background-color: #000215;
+            border-radius: .5rem;
+        }
+    }
+}
+
+.sidebar {
+    .btn-signup {
+        background-color: rgb(29, 157, 23);
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                background-color: rgb(16, 128, 10);
+            }
+        }
+    }
+
+    .btn-login {
+        background-color: transparent;
+        box-shadow: none;
+
+        @media (hover: hover) and (pointer: fine) {
+            transition: .2s;
+
+            &:hover {
+                color: rgb(143, 143, 143);
+            }
+        }
+    }
+}
