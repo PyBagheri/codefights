@@ -4,6 +4,7 @@ certifi==2024.2.2
 charset-normalizer==3.3.2
 Django==5.0.2
 docker==7.0.0
+gunicorn==22.0.0
 hiredis==2.3.2
 idna==3.7
 marshmallow==3.20.2

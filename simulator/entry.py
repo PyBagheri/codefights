@@ -9,14 +9,12 @@ if __name__ != '__main__':
 if os.getuid() != 0:
     exit(1)
 
-# The script must be given only one argument: the worker
-# name. It's used as the Redis consumer name, as well as
-# for logging.
+# The one and only argument must be the worker name,
+# which will also be used as the redis consumer name.
 if len(sys.argv) != 2:
     exit(1)
-    
-WORKER_NAME = sys.argv[1]
 
+WORKER_NAME = sys.argv[1]
 
 import redis
 import resource
@@ -71,6 +69,14 @@ os.environ.setdefault('SIMULATOR_SETTINGS_MODULE', 'simulator.settings')
 
 settings = importlib.import_module(os.environ.get('SIMULATOR_SETTINGS_MODULE'))
 global_config = importlib.import_module(os.environ.get('GLOBAL_CONFIG_MODULE'))
+
+
+# We'll want everything in text form, so enable auto-decoding.
+redis_client = redis.from_url(global_config.REDIS_SERVER_URL,
+                              decode_responses=True)
+
+docker_client = docker.DockerClient(base_url=global_config.DOCKER_SERVER_URL)
+
 
 
 log_file = Path(global_config.LOGGING_ROOT) / \
@@ -216,14 +222,8 @@ class StreamTalker:
             raise self.exc
         
         # discard the trailing '\n'
-        return res[:-1] 
+        return res[:-1]
 
-
-# We'll want everything in text form, so enable auto-decoding.
-redis_client = redis.from_url(global_config.REDIS_SERVER_URL,
-                              decode_responses=True)
-
-docker_client = docker.DockerClient(base_url=global_config.DOCKER_SERVER_URL)
 
 # If anything fails for the forkserver in the beginning, we
 # won't log it directly, and rather let it simply error and exit.
@@ -676,9 +676,11 @@ class CRController:
         self.is_alive = False
 
 
+MEDIA_ROOT = Path(global_config.MEDIA_ROOT)
+
 def get_code(filename):
     try:
-        with open(settings.MEDIA_ROOT / filename) as f:
+        with open(MEDIA_ROOT / filename) as f:
             return f.read()
     # If the player uploads a bytes-formatted file,
     # just return an empty string as the code.
@@ -748,6 +750,17 @@ def process(message):
                       global_config.REDIS_SIMULATOR_GROUP,
                       message_id)
 
+
+
+# Create the stream and the group if they don't exist.
+try:
+    redis_client.xgroup_create(
+        name=global_config.REDIS_SIMULATOR_STREAM,
+        groupname=global_config.REDIS_SIMULATOR_GROUP,
+        mkstream=True
+    )
+except redis.exceptions.ResponseError:
+    pass
 
 # The worker might crash while some simulations have
 # not been acknowledged yet (which shouldn't really

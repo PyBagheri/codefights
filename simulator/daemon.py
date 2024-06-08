@@ -35,7 +35,7 @@ signal.signal(signal.SIGCHLD, end_all)
 
 
 if __name__ == '__main__':
-    for i in range(global_config.WORKERS['simulator']):
+    for i in range(1, global_config.WORKERS['simulator']+1):
         worker_name = WORKER_NAME_FORMAT.format(i)
         
         workers.append(subprocess.Popen(
@@ -49,7 +49,9 @@ if __name__ == '__main__':
             # So that we can run the entry.py script through its parent
             # directory name. This way the modules in this level will
             # also be accessible for import to the script.
-            cwd=BASE_DIR
+            cwd=BASE_DIR,
+            
+            stderr=sys.stderr
         ))
 
 

@@ -1,0 +1,146 @@
+# TODO: Fix logging; it's too messy; some services write
+# their logs to stdout/stderr, some to file and some to
+# both. Make it cleaner smh :/
+#
+# TODO: Make the configs as concise as possible (a job for
+# later). This includes the compose yaml files as well as
+# the global config modules (config_dev.py and config_prod.py).
+# They are the messiest things on this project.
+
+services:
+  web:
+    build:
+      # The web and the result processor share most of their codes,
+      # so we have them both in the same Dockerfile with different
+      # target build stages to stop at for each one.
+      context: .
+      target: web
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: db
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8000"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 5s  # just to be sure
+      start_interval: 1s
+    expose:
+      - 8000
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    
+  nginx:
+    build:
+      context: nginx/
+    volumes:
+      - ./staticfiles/:/staticfiles/
+    environment:
+      APP_HOSTNAME: web
+
+      # To be populated...
+      SERVER_MAIN_DOMAIN:
+      SERVER_FILES_DOMAIN:
+      MEDIA_ROOT:
+      STATIC_ROOT:
+      MEDIA_URL:
+      STATIC_URL:
+    depends_on:
+      web:
+        condition: service_healthy
+  
+  # For WebSockets. Later ...
+  # async_web:
+  #   ...
+
+  redis:
+    image: redis:7.2.5
+    # Make sure to sync the redis unix socket location in the global config file.
+    # NOTE: Even through docker can take care of the logs, I'd still want to have
+    # them on the host too.
+    entrypoint: redis-server --unixsocket /var/run/redis/redis.sock --unixsocketperm 775 --logfile /var/log/redis/redis-server.log
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli", "ping"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 5s  # just to be sure
+      start_interval: 1s
+    
+
+  db:
+    image: postgres:16
+    # See https://github.com/docker-library/docs/blob/master/postgres/content.md#docker-secrets
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 5s  # just to be sure
+      start_interval: 1s
+
+    # Use the appropriate user
+    user:
+
+
+  simulator:
+    build:
+      context: simulator/
+      additional_contexts:
+        project_root: .
+    volumes:
+      # Docker unix socket
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      redis:
+        condition: service_healthy
+    
+    # This services is rather special; it needs high levels of
+    # permission, as if it's a daemon in the host machine running
+    # as root. It has to share the same PID namespace with the
+    # host, so that the PID namespace of the coderunner containers
+    # that are created in the host are children of the PID namespace
+    # of this container (which is host's). Docker also applies a
+    # default apparmor profile to all the containers, so we have to
+    # disable the apparmor here to allow ptrace(). We also need the
+    # certain capabilities, as specified below.
+    pid: host
+    user: root
+    cap_add:
+      - CAP_SYS_PTRACE    # for ptrace()
+      - CAP_SYS_RESOURCE  # for setrlimit()
+    security_opt:
+      - apparmor=unconfined
+
+  
+  result_processor:
+    build:
+      # The web and the result processor share most of their codes,
+      # so we have them both in the same Dockerfile with different
+      # target build stages to stop at for each one.
+      context: .
+      target: result_processor
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: db
+    
+
+
+volumes:
+  redis_sock_dir:
+  postgres_data:
+    external: true
+  uploaded_files:
+    external: true

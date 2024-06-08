@@ -1,0 +1,54 @@
+# syntax=docker/dockerfile:1
+
+ARG PYTHON_VERSION=3.11.9
+
+# Build stage 1:
+# - Build the coderunner extension.
+# - Compile the run.py to get rid of the comments.
+# - Build the settings to only include the necessary settings
+#   and also get rid of the comments.
+FROM --platform=linux/amd64 python:${PYTHON_VERSION}-slim
+
+RUN rm -f /etc/apt/apt.conf.d/docker-clean
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    apt -o Acquire::Check-Valid-Until=false update && \
+    apt install -y --no-install-recommends build-essential libseccomp-dev
+
+RUN mkdir /source/
+RUN mkdir /build/
+
+COPY settings.py /source/
+COPY coderunner/run.py /source/
+COPY coderunner/build.py /source/
+COPY coderunner/extensions/ /source/extensions/
+
+WORKDIR /source/extensions/
+
+# By using the name 'build_docker', we make sure that we don't
+# use already-compiled files that might be copied from the host.
+RUN [ "/usr/local/bin/python3", "setup.py", "build_ext", "--build-lib", "build_docker" ]
+
+WORKDIR /
+
+# We want only this single file from the extensions/build_docker/ directory.
+RUN cp /source/extensions/build_docker/tracee.cpython-3*-x86_64-linux-gnu.so /build/
+
+RUN [ "/usr/local/bin/python3", "/source/build.py" ]
+
+
+
+# Build stage 2: The actual image
+FROM --platform=linux/amd64 python:${PYTHON_VERSION}-slim
+
+RUN mkdir /coderunner/
+
+COPY --from=0 /build/* /coderunner/
+
+ENTRYPOINT [ "/usr/local/bin/python3", "/coderunner/run.pyc" ]
+
+# The coderunner MUST be run as a specified user with
+# limitied permissions, dedicated for the coderunner.
+# We get rid of the default "root" here. Upon running,
+# we should run as the specified user.
+USER nobody

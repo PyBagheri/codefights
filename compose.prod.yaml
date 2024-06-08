@@ -1,0 +1,112 @@
+# NOTE: Set the values on the production site; including
+# 'user' (except for the simulator) and some env vars.
+
+services:
+  web:
+    extends:
+      file: compose.base.yaml
+      service: web
+    volumes:
+      # The global config
+      - ./config_prod.py:/main/config.py
+      
+      # The redis unix socket directory
+      - redis_sock_dir:/var/run/redis/
+
+      # The logs directory
+      - /var/log/codefights/:/var/log/codefights/
+
+      # The media root
+      - uploaded_files:/srv/codefights/
+    user: ...
+    
+  nginx:
+    extends:
+      file: compose.base.yaml
+      service: nginx
+    volumes:
+      - uploaded_files:/srv/codefights/
+      - /var/log/codefights/nginx/:/var/log/nginx/
+    environment:
+      APP_HOSTNAME: web
+
+      # To be populated...
+      SERVER_MAIN_DOMAIN:
+      SERVER_FILES_DOMAIN:
+      MEDIA_ROOT:
+      STATIC_ROOT:
+      MEDIA_URL:
+      STATIC_URL:
+    user: ...
+  
+  # For WebSockets. Later ...
+  # async_web:
+  #   ...
+
+  redis:
+    extends:
+      file: compose.base.yaml
+      service: redis
+    volumes:
+      # We mount the directory rather than the config file itself, as redis
+      # will complain if the file is already created.
+      - redis_sock_dir:/var/run/redis/
+
+      # The logs directory
+      - /var/log/codefights/redis/:/var/log/redis/
+    user: ...
+    
+
+  db:
+    extends:
+      file: compose.base.yaml
+      service: db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    user: ...
+
+
+  simulator:
+    extends:
+      file: compose.base.yaml
+      service: simulator
+    volumes:
+      # The global config
+      - ./config_prod.py:/main/config.py
+        
+      # The redis unix socket directory
+      - redis_sock_dir:/var/run/redis/
+
+      # The logs directory
+      - /var/log/codefights:/var/log/codefights/
+
+      # The media root
+      - uploaded_files:/srv/codefights/
+
+  
+  result_processor:
+    extends:
+      file: compose.base.yaml
+      service: result_processor
+    volumes:
+      # The global config
+      - ./config_prod.py:/main/config.py
+      
+      # The redis unix socket directory
+      - redis_sock_dir:/var/run/redis/
+
+      # The logs directory
+      - /var/log/codefights/:/var/log/codefights/
+
+      # The media root
+      - uploaded_files:/srv/codefights/
+    user: ...
+
+
+volumes:
+  redis_sock_dir:
+  postgres_data:
+    external: true
+  uploaded_files:
+    external: true

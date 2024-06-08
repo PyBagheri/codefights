@@ -1,0 +1,169 @@
+services:
+  web:
+    extends:
+      file: compose.base.yaml
+      service: web
+    volumes:  
+      # The global config
+      - ./config_dev.py:/main/config.py
+    
+      # The logging directory
+      - ./logs_dev/:/main/logs_dev/
+
+      # The media root
+      - ./media_dev/:/main/media_dev/
+
+      # The redis unix socket directory
+      - redis_sock_dir_dev:/var/run/redis/
+
+      # The code files and directories; this is more
+      # efficient for development, as there would be
+      # no need to build the images again.
+      - ./gamespecs/:/main/gamespecs/
+      - ./fights/:/main/fights/
+      - ./accounts/:/main/accounts/
+      - ./pages/:/main/pages/
+      - ./common/:/main/common/
+      - ./utils/:/main/utils/
+      - ./django_project/:/main/django_project/
+      - ./games/:/main/games/
+      - ./templates/:/main/templates/
+      - ./manage.py:/main/manage.py
+    environment:
+      # See the comments below on nginx's env vars as to
+      # why we use 127.0.0.1 here instead of localhost.
+      MEDIA_URL: http://127.0.0.1:8000/media/
+      STATIC_URL: http://127.0.0.1:8000/static/
+
+    # Only for development.
+    entrypoint: python3 manage.py runserver 0.0.0.0:8000
+    
+  
+  # For WebSockets. Later ...
+  # async_web:
+  #   ...
+
+  nginx:
+    extends:
+      file: compose.base.yaml
+      service: nginx
+    ports:
+      - 8000:80
+    volumes:
+      # By mounting the static/ instead of the staticfiles/,
+      # we don't need to run collectstatic in development every
+      # time we change some static files. We also add admin's
+      # static files separately, as we need to collectstatic
+      # to get them.
+      - ./static/:/staticfiles/
+      - ./staticfiles/admin/:/staticfiles/admin/
+
+      - ./media_dev/:/media_dev/
+      - ./logs_dev/nginx/:/var/log/nginx/
+    environment:
+      SERVER_MAIN_DOMAIN: localhost
+      
+      # To have a different origin/domain name from the main
+      # domain name (here, for dev, it's 'localhost'), we use
+      # the actual IP of localhost (which will count as a
+      # different origin). This way nginx will serve both the
+      # main and the files domains. For production, we must
+      # choose proper domains (e.g., a subdomain for files).
+      SERVER_FILES_DOMAIN: 127.0.0.1
+
+      # Use these paths for bind monuting the directories.
+      MEDIA_ROOT: /media_dev/
+      STATIC_ROOT: /staticfiles/
+
+      MEDIA_URL: /media/
+      STATIC_URL: /static/
+  
+
+  redis:
+    extends:
+      file: compose.base.yaml
+      service: redis
+    volumes:
+      - ./logs_dev/redis/:/var/log/redis/
+      - redis_sock_dir_dev:/var/run/redis/
+
+
+  db:
+    extends:
+      file: compose.base.yaml
+      service: db
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    
+    # only for development.
+    environment:
+      POSTGRES_USER: "postgres"
+    user: postgres
+
+
+  simulator:
+    extends:
+      file: compose.base.yaml
+      service: simulator
+    volumes:
+      # The global confignormal
+      - ./config_dev.py:/main/config.py
+
+      # # The logging directory
+      - ./logs_dev/:/main/logs_dev/
+
+      # The media root
+      - ./media_dev/:/main/media_dev/
+
+      # The redis unix socket directory
+      - redis_sock_dir_dev:/var/run/redis/
+
+      # The code files and directories; this is more
+      # efficient for development, as there would be
+      # no need to build the images again.
+      #
+      # NOTE: If you make a change in the C extensions,
+      # you MUST rebuild the image, as it will have to
+      # recompile it. Also, currently, if any changes are
+      # made to the coderunner, its image MUST be rebuilt.
+      - ./simulator/entry.py:/main/simulator/entry.py
+      - ./simulator/daemon.py:/main/simulator/daemon.py
+      - ./simulator/settings.py:/main/simulator/settings.py
+      - ./common/:/main/common/
+      - ./games/:/main/games/
+
+  
+  result_processor:
+    extends:
+      file: compose.base.yaml
+      service: result_processor
+    volumes:
+      # The global config
+      - ./config_dev.py:/main/config.py
+    
+      # The logging directory
+      - ./logs_dev/:/main/logs_dev/
+
+      # The redis unix socket directory
+      - redis_sock_dir_dev:/var/run/redis/
+
+      # The code files and directories; this is more
+      # efficient for development, as there would be
+      # no need to build the images again.
+      - ./gamespecs/:/main/gamespecs/
+      - ./fights/:/main/fights/
+      - ./accounts/:/main/accounts/
+      - ./pages/:/main/pages/
+      - ./common/:/main/common/
+      - ./utils/:/main/utils/
+      - ./django_project/:/main/django_project/
+      - ./games/:/main/games/
+      - ./templates/:/main/templates/
+      - ./manage.py:/main/manage.py
+      - ./result_processor/:/main/result_processor/
+
+
+volumes:
+  redis_sock_dir_dev:
+  postgres_data_dev:
+    external: true

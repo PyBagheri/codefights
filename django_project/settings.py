@@ -73,8 +73,6 @@ INSTALLED_APPS = [
     # Local apps
     'accounts',
     'pages',
-    'blog',
-    'chats',
     'fights',
     'gamespecs',
 ]
@@ -186,7 +184,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static', *[BASE_DIR / d for d in GAMES_STATIC_DI
 #
 # This is useful for using manage.py collectstatic;
 # Django will not be serving static files.
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = global_config.STATIC_ROOT
 
 
 
@@ -207,7 +205,7 @@ MEDIA_URL = global_config.MEDIA_URL
 # Must be either a docker volume in a container or
 # on the host machine itself. This is so that we can
 # run the project without docker too.
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = global_config.MEDIA_ROOT
 
 
 MAX_CODE_UPLOAD_SIZE = 100000  # in bytes

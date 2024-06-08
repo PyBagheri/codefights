@@ -128,11 +128,6 @@ CPU_TIME_EXCEED_SIGNAL = signal.SIGUSR1
 GAMES_INDEX_MODULE = 'games.index'
 
 
-# This must be either a docker volume in a container or
-# the media root on the host machine.
-MEDIA_ROOT = SIMULATOR_ROOT.parent / 'media'
-
-
 # -------- Control codes --------
 
 # We're not using a class to organize these

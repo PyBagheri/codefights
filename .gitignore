@@ -5,5 +5,10 @@
 **/*.o
 **/*.rdb
 **/*.log
+
+# ONLY FOR THE PUBLIC REPOSITORY
 **/migrations/
-media/
+
+media_dev/
+logs_dev/
+staticfiles/

@@ -1,7 +1,7 @@
-# This file is only meant for DEBUGGING & DEVELOPMENT.
+# This file is only meant for PRODUCTION.
 #
-# The names, paths, URLs, ports and keys used here may
-# or may not make their way to the production.
+# Fill in the necessary configs (usually marked by '...')
+# with the appropriate values.
 
 
 import os
@@ -17,28 +17,28 @@ _BASE_DIR = Path(__file__).parent
 
 ######################## CONFIGS BEGIN HERE ########################
 
-DEBUG = True
+DEBUG = False
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['...']
 
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ['...']
 
 
 # Relative to the website's main domain.
-ADMIN_URL = 'admin/'
+ADMIN_URL = '.../'
 
 
 POSTGRES = {
-    'DATABASE_NAME': 'codefights_dev',
-    'USER': 'postgres',
+    'DATABASE_NAME': '...',
+    'USER': '...',
     'HOST': E('POSTGRES_HOST', '127.0.0.1'),
     'PORT': '5432'
 }
 
 
-STATIC_URL = E('STATIC_URL', 'static/')
+STATIC_URL = E('STATIC_URL', 'https://...other.origin.domain...')
 
 # Unlike the media root, this better be a fixed directory
 # in the project's base.
@@ -46,11 +46,11 @@ STATIC_ROOT = _BASE_DIR / 'staticfiles/'
 
 
 
-MEDIA_URL = E('MEDIA_URL', 'media/')
+MEDIA_URL = E('MEDIA_URL', 'https://...other.origin.domain...')
 
 # It's recommended to be somewhere in /srv. See:
 # https://unix.stackexchange.com/questions/233343/
-MEDIA_ROOT = Path(E('MEDIA_ROOT', _BASE_DIR / 'media_dev/'))
+MEDIA_ROOT = Path(E('MEDIA_ROOT', '/srv/.../'))
 
 
 # These are relative to the MEDIA_ROOT.
@@ -59,11 +59,11 @@ PRESET_CODES_DIR = 'presets/'
 TEMPLATE_CODES_DIR = 'templates/'
 
 
-DEFAULT_FROM_EMAIL = 'test@dev.com'
+DEFAULT_FROM_EMAIL = '...'
 
 
 
-LOGGING_ROOT = Path(E('LOGGING_ROOT', _BASE_DIR / 'logs_dev'))
+LOGGING_ROOT = E('LOGGING_ROOT', '/var/log/codefights/')
 
 LOGGING_FILES_PATHS = {
     'workers': {
@@ -76,12 +76,11 @@ LOGGING_FILES_PATHS = {
 REDIS_SERVER_URL = 'unix:///var/run/redis/redis.sock'
 
 # Currently we only need only one stream group for these.
-REDIS_SIMULATOR_STREAM = 'test_stream_simulator'
-REDIS_SIMULATOR_GROUP = 'test_group_simulator'
+REDIS_SIMULATOR_STREAM = '...'
+REDIS_SIMULATOR_GROUP = '...'
 
-REDIS_RESULT_PROCESSOR_STREAM = 'test_stream_result_processor'
-REDIS_RESULT_PROCESSOR_GROUP = 'test_group_result_processor'
-
+REDIS_RESULT_PROCESSOR_STREAM = '...'
+REDIS_RESULT_PROCESSOR_GROUP = '...'
 
 
 DOCKER_SERVER_URL = 'unix:///var/run/docker.sock'

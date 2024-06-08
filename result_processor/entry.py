@@ -7,6 +7,7 @@ import sys
 if __name__ != '__main__':
     exit(1)
 
+
 # The one and only argument must be the worker name,
 # which will also be used as the redis consumer name.
 if len(sys.argv) != 2:
@@ -14,10 +15,14 @@ if len(sys.argv) != 2:
 
 WORKER_NAME = sys.argv[1]
 
+
 import redis.asyncio as redis
 import asyncio
 import json
 import importlib
+
+# Apparently the error class is from the sync version.
+from redis.exceptions import ResponseError
 
 
 import django
@@ -188,6 +193,16 @@ async def process_forever():
 
 
 async def main():
+    # Create the stream and the group if they don't exist.
+    try:
+        await redis_client.xgroup_create(
+            name=global_config.REDIS_RESULT_PROCESSOR_STREAM,
+            groupname=global_config.REDIS_RESULT_PROCESSOR_GROUP,
+            mkstream=True
+        )
+    except ResponseError:
+        pass
+    
     await process_unacked()
     await process_forever()  # will never stop
 
