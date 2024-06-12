@@ -104,7 +104,11 @@ services:
     user: postgres
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      # The "-U ..." isn't really necessary; if we don't do it
+      # and the default username 'postgres' is not a user, then
+      # it would complain in the logs that "role 'postgres' does
+      # not exist". So we keep it here.
+      test: ["CMD-SHELL", "pg_isready", "-U", "${PG_SUPERUSER_USER}"]
       interval: 1m30s
       timeout: 30s
       retries: 5
