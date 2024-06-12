@@ -149,6 +149,9 @@ class VerifyEmailView(View):
     
     @transaction.atomic(durable=True)
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home')
+        
         v = self.get_email_verification_or_404()
         
         match v.verification_type:
@@ -162,6 +165,9 @@ class VerifyEmailView(View):
 
     @transaction.atomic(durable=True)
     def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home')
+        
         v = self.get_email_verification_or_404()
         
         if v.verification_type != EmailVerification.VerificationTypes.PASSWORD_RECOVERY:

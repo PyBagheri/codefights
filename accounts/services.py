@@ -96,7 +96,7 @@ class CreatePasswordRecoveryEmailVerificationService:
         if send_email:
             # TODO: Generalize the URL construction later, rather than
             # just using the first allowed host.
-            message = 'Opening this link to reset your password: '  \
+            message = 'Open this link to reset your password: '  \
                       f'https://{settings.ALLOWED_HOSTS[0]}{v.get_absolute_url()}'
             
             send_mail(
