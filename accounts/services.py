@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.mail import send_mail
+from django.conf import settings
 
 from accounts.models import User, EmailVerification
 
@@ -55,7 +56,10 @@ class CreateInitialEmailVerificationService:
         )
         
         if send_email:
-            message = f'Verify your email address by opening this link: {v.get_absolute_url()}'
+            # TODO: Generalize the URL construction later, rather than
+            # just using the first allowed host.
+            message = 'Verify your email address by opening this link: '  \
+                      f'https://{settings.ALLOWED_HOSTS[0]}{v.get_absolute_url()}'
             
             send_mail(
                 subject='Verify your email address',
@@ -90,7 +94,10 @@ class CreatePasswordRecoveryEmailVerificationService:
         )
         
         if send_email:
-            message = f'Opening this link to reset your password: {v.get_absolute_url()}'
+            # TODO: Generalize the URL construction later, rather than
+            # just using the first allowed host.
+            message = 'Opening this link to reset your password: '  \
+                      f'https://{settings.ALLOWED_HOSTS[0]}{v.get_absolute_url()}'
             
             send_mail(
                 subject='Reset password',
