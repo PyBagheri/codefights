@@ -22,12 +22,26 @@ class ContentView(TemplateView):
     
 
 
-class Handler404(TemplateView):
+class Handler404(View):
     template_name = '404.html'
+    
+    def get(self, request, *args, **kwargs):
+        return render(
+            request=request,
+            template_name=self.template_name,
+            status=404
+        )
 
 
-class Handler500(TemplateView):
+class Handler500(View):
     template_name = '500.html'
+    
+    def get(self, request, *args, **kwargs):
+        return render(
+            request=request,
+            template_name=self.template_name,
+            status=500
+        )
 
 
 class HomeView(ContentView):
