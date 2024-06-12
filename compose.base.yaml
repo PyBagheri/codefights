@@ -29,6 +29,10 @@ services:
       start_interval: 1s
     expose:
       - 8000
+    volumes:
+      # Used for 'collectstatic'.
+      - ./static/:/main/static/
+      - ./staticfiles/:/main/staticfiles/
     depends_on:
       redis:
         condition: service_healthy
@@ -96,7 +100,7 @@ services:
     # the provided environment variables (see above), and that's separate
     # from the system user that will own the files and run the DB server.
     # This username *can* be changed, but there is not much point to it
-    # to my curreny knowledge (and it's just a labour).
+    # to my current knowledge (and it's just a labour).
     user: postgres
 
     healthcheck:
