@@ -16,9 +16,10 @@ services:
       context: .
       target: web
     environment:
+      POSTGRES_HOST: db
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: db
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "8000"]
       interval: 1m30s
@@ -34,21 +35,18 @@ services:
       db:
         condition: service_healthy
     
+  
+  # Currently only for production.
   nginx:
     build:
       context: nginx/
     volumes:
-      - ./staticfiles/:/staticfiles/
+      - ./staticfiles/:/srv/staticfiles/
     environment:
       APP_HOSTNAME: web
-
-      # To be populated...
-      SERVER_MAIN_DOMAIN:
-      SERVER_FILES_DOMAIN:
-      MEDIA_ROOT:
-      STATIC_ROOT:
-      MEDIA_URL:
-      STATIC_URL:
+    ports:
+      - 80:80
+      - 443:443
     depends_on:
       web:
         condition: service_healthy
@@ -58,11 +56,8 @@ services:
   #   ...
 
   redis:
-    image: redis:7.2.5
-    # Make sure to sync the redis unix socket location in the global config file.
-    # NOTE: Even through docker can take care of the logs, I'd still want to have
-    # them on the host too.
-    entrypoint: redis-server --unixsocket /var/run/redis/redis.sock --unixsocketperm 775 --logfile /var/log/redis/redis-server.log
+    build:
+      context: redis/
     healthcheck:
       test: ["CMD-SHELL", "redis-cli", "ping"]
       interval: 1m30s
@@ -74,10 +69,36 @@ services:
 
   db:
     image: postgres:16
-    # See https://github.com/docker-library/docs/blob/master/postgres/content.md#docker-secrets
+    
+    # See:
+    # - https://github.com/docker-library/docs/blob/master/postgres/content.md#docker-secrets
+    # - https://github.com/docker-library/postgres/issues/175
+    #
+    # The following env vars are NOT going to be used for production; they
+    # are merely there to set the initial superuser for the database. For
+    # production, a proper user with strict permissions must be created
+    # after postgres is set up. Finally note that none of these affect the
+    # "system" user "postgers", which will be the owner of the volumes and
+    # database files, which we rather not change.
+    #
+    # Regardless of what user we use for production, I think it's better
+    # to use some other username than the default 'postgres' for the initial
+    # superuser; this way, it would be safer against a brute-force trial of
+    # passwords for the infamous username 'postgres'.
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PG_SUPERUSER_PASSWORD}
+      POSTGRES_USER: ${PG_SUPERUSER_USER}
+    
+    # Both for development and production. This user must be the owner of
+    # the volumes and database files, no matter what the username of the
+    # superuser "database" user will be. Yes: the default name for the
+    # initial database superuser is "postgres", which we can change using
+    # the provided environment variables (see above), and that's separate
+    # from the system user that will own the files and run the DB server.
+    # This username *can* be changed, but there is not much point to it
+    # to my curreny knowledge (and it's just a labour).
+    user: postgres
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 1m30s
@@ -85,9 +106,6 @@ services:
       retries: 5
       start_period: 5s  # just to be sure
       start_interval: 1s
-
-    # Use the appropriate user
-    user:
 
 
   simulator:
@@ -127,15 +145,14 @@ services:
       # target build stages to stop at for each one.
       context: .
       target: result_processor
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       redis:
         condition: service_healthy
       db:
         condition: service_healthy
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: db
-    
 
 
 volumes:

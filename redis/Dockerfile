@@ -1,5 +1,4 @@
-FROM nginxinc/nginx-unprivileged:1.27.0-bookworm-perl
-
+FROM redis:7.2.5
 
 ARG PRODUCTION_UID
 ARG PRODUCTION_GID
@@ -38,13 +37,7 @@ ARG PRODUCTION_GID
 # As suggested in the second link, we're creating the user for
 # production in the image build stage. If no group ID is specified,
 # then we use the user's default group.
-#
-# Note that we chown the named volumes (for explanation, see the
-# main Dockerfile for 'web' in the root of the project). We also
-# create and chown the config directory and the pid file, so that
-# they are writable by the non-root user that will be running the
-# container.
-USER root
+
 RUN <<EOR
     if [ -n "${PRODUCTION_UID}" ]; then
         useradd -o -m -u "${PRODUCTION_UID}" app
@@ -54,19 +47,14 @@ RUN <<EOR
             groupadd -g "${PRODUCTION_GID}" app
         fi
 
-        mkdir -p /srv/codefights/
-        chown -R ${PRODUCTION_UID}:${PRODUCTION_GID} /srv/codefights/
-
-        mkdir -p /etc/nginx/conf.d/
-        chown -R ${PRODUCTION_UID}:${PRODUCTION_GID} /etc/nginx/conf.d/
+        mkdir -p /var/run/redis/
+        chown -R ${PRODUCTION_UID}:${PRODUCTION_GID} /var/run/redis/
     fi
 EOR
 
 
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf.template /etc/nginx/conf.d/
-
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT [ "/entrypoint.sh" ]
+# Make sure to sync the redis unix socket location in the global config files.
+# NOTE: Even through docker can take care of the logs by letting them be printed
+# on the stdout, I'd currently want to have them as files on the host instead,
+# by a bind mount to the path specified below.
+ENTRYPOINT [ "redis-server", "--unixsocket", "/var/run/redis/redis.sock", "--unixsocketperm", "775", "--logfile", "/var/log/redis/redis-server.log" ]

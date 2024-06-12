@@ -61,6 +61,11 @@ TEMPLATE_CODES_DIR = 'templates/'
 
 DEFAULT_FROM_EMAIL = 'test@dev.com'
 
+# TODO: Fix for later, so that we can test the email sending.
+EMAIL_HOST = ''
+EMAIL_PORT = ''
+EMAIL_HOST_USER = ''
+
 
 
 LOGGING_ROOT = Path(E('LOGGING_ROOT', _BASE_DIR / 'logs_dev'))

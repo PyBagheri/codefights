@@ -61,6 +61,10 @@ TEMPLATE_CODES_DIR = 'templates/'
 
 DEFAULT_FROM_EMAIL = '...'
 
+EMAIL_HOST = '...'
+EMAIL_PORT = '...'
+EMAIL_HOST_USER = '...'
+
 
 
 LOGGING_ROOT = E('LOGGING_ROOT', '/var/log/codefights/')

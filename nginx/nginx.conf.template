@@ -1,18 +1,115 @@
+# NOTE: This file is only meant for production.
+
+
 upstream codefights {
     # We'll keep the port number 8000 fixed.
     server ${APP_HOSTNAME}:8000;
 }
 
-# Default server block when the request matches none of
-# the domains specified in later server blocks.
+# See
+# - https://serverfault.com/questions/1062957 (both answers)
+#
+# Explanation:
+# We set this as the default_server; however, this wasn't
+# necessary, as this is the only config file the container
+# will be using, and that this 'server' block is the first
+# one (of the corresponding port) in the config file. This
+# means that it will be chosen as the default anyways. Note
+# that default_server must be only one for each [ip:]port
+# pair (it makes no sense otherwise); IP is only specified
+# in the 'listen' directive if the server has multiple IP's.
+#
+# We could have also omitted the 'server_name' directive,
+# because if we don't include it, nginx will take an empty
+# string as the domain name, which is an invalid domain name
+# and won't match anything (just like '_'). In either case,
+# it's important that it matches no domains, so it isn't used
+# for any actual valid domain we want to handle properly.
+#
+# The second answer in the link has one mistake: we don't
+# need to include "server_name _" to make it not catch any
+# domain, which we explained above.
+#
+# We return code 444. This is an unofficial error code, which
+# indicates that the server returned no response and closed
+# the connection.
+#
+# Now: what is the purpose of this server block? It is to
+# reject invalid domain names. This might happen in various
+# ways:
+# - No "Host" header included.
+# - Some invalid domain name refers to the server's IP.
+# - ... anything else? not sure.
 server {
-    return 404;
+    listen 80 default_server;
+    server_name _;
+    return 444;
+}
+
+# The same as above for HTTPS.
+server {
+    listen 443 default_server ssl;
+
+    ssl_certificate     ${SSL_CERT_PATH};
+    ssl_certificate_key ${SSL_KEY_PATH};
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+    server_name _;
+
+    return 444;
+}
+
+
+# Redirect HTTP to HTTPS; also set the URL's for letsencrypt challenges.
+# We do it explicitly for each domain, so that invalid domain names (as
+# explaned above) aren't redirected. For more info on the letsencrypt
+# stuff, see https://eff-certbot.readthedocs.io/en/stable/using.html#webroot.
+# Note that ACME challenges are done on port 80. Also note that the
+# longest prefix matched will be chosen for location.
+server {
+    listen 80;
+    server_name ${SERVER_MAIN_DOMAIN};
+
+    # Other than letsencrypt requests
+    location / {
+        return 301 https://$host$request_uri;
+    }
+
+    # For letsencrypt requests
+    location /.well-known/acme-challenge/ {
+        autoindex off;
+        alias ${ACME_CHALLENGE_ROOT};
+    }
 }
 
 server {
-    server_name ${SERVER_MAIN_DOMAIN};
-
     listen 80;
+    server_name ${SERVER_FILES_DOMAIN};
+    
+    # Other than letsencrypt requests
+    location / {
+        return 301 https://$host$request_uri;
+    }
+
+    # For letsencrypt requests
+    location /.well-known/acme-challenge/ {
+        autoindex off;
+        alias ${ACME_CHALLENGE_ROOT};
+    }
+}
+
+
+# Proxying to the actual servers.
+server {
+    listen 443 ssl;
+
+    ssl_certificate     ${SSL_CERT_PATH};
+    ssl_certificate_key ${SSL_KEY_PATH};
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+    server_name ${SERVER_MAIN_DOMAIN};
 
     location / {
         proxy_pass http://codefights;
@@ -23,6 +120,13 @@ server {
 }
 
 server {
+    listen 443 ssl;
+    
+    ssl_certificate     ${SSL_CERT_PATH};
+    ssl_certificate_key ${SSL_KEY_PATH};
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
     server_name ${SERVER_FILES_DOMAIN};
 
     location ${STATIC_URL} {

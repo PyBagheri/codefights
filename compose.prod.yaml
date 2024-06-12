@@ -6,6 +6,10 @@ services:
     extends:
       file: compose.base.yaml
       service: web
+    build:
+      args:
+        PRODUCTION_UID: ${PRODUCTION_UID}
+        PRODUCTION_GID: ${PRODUCTION_GID}
     volumes:
       # The global config
       - ./config_prod.py:/main/config.py
@@ -18,18 +22,26 @@ services:
 
       # The media root
       - uploaded_files:/srv/codefights/
-    user: ...
+    user: app
     
   nginx:
     extends:
       file: compose.base.yaml
       service: nginx
+    build:
+      args:
+        PRODUCTION_UID: ${PRODUCTION_UID}
+        PRODUCTION_GID: ${PRODUCTION_GID}
     volumes:
       - uploaded_files:/srv/codefights/
       - /var/log/codefights/nginx/:/var/log/nginx/
-    environment:
-      APP_HOSTNAME: web
+      
+      # Replace with the directory holding the certificates.
+      - ...:/etc/certs/
 
+      # Replace with the acme challenge directory.
+      - ...:/etc/acme/
+    environment:
       # To be populated...
       SERVER_MAIN_DOMAIN:
       SERVER_FILES_DOMAIN:
@@ -37,7 +49,10 @@ services:
       STATIC_ROOT:
       MEDIA_URL:
       STATIC_URL:
-    user: ...
+      SSL_CERT_PATH:
+      SSL_KEY_PATH:
+      ACME_CHALLENGE_ROOT:
+    user: app
   
   # For WebSockets. Later ...
   # async_web:
@@ -47,14 +62,18 @@ services:
     extends:
       file: compose.base.yaml
       service: redis
+    build:
+      args:
+        PRODUCTION_UID: ${PRODUCTION_UID}
+        PRODUCTION_GID: ${PRODUCTION_GID}
     volumes:
-      # We mount the directory rather than the config file itself, as redis
+      # We mount the directory rather than the socket file itself, as redis
       # will complain if the file is already created.
       - redis_sock_dir:/var/run/redis/
 
       # The logs directory
       - /var/log/codefights/redis/:/var/log/redis/
-    user: ...
+    user: app
     
 
   db:
@@ -63,8 +82,6 @@ services:
       service: db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-    user: ...
 
 
   simulator:
@@ -89,6 +106,10 @@ services:
     extends:
       file: compose.base.yaml
       service: result_processor
+    build:
+      args:
+        PRODUCTION_UID: ${PRODUCTION_UID}
+        PRODUCTION_GID: ${PRODUCTION_GID}
     volumes:
       # The global config
       - ./config_prod.py:/main/config.py
@@ -101,12 +122,21 @@ services:
 
       # The media root
       - uploaded_files:/srv/codefights/
-    user: ...
+    user: app
 
 
 volumes:
+  # tmpfs volumes cannot be shared between containers,
+  # so we use a normal docker volume. Apparently, it
+  # must be external; otherwise it will mount as root
+  # instead of copying what's in the service 'redis',
+  # which is set to have the correct owner (user 'app').
+  # I'm not sure why this happens ... search later.
   redis_sock_dir:
+    external: true
+
   postgres_data:
     external: true
+  
   uploaded_files:
     external: true

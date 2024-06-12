@@ -157,6 +157,14 @@ USE_TZ = True
 DEFAULT_FROM_EMAIL = global_config.DEFAULT_FROM_EMAIL
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = global_config.EMAIL_HOST
+EMAIL_PORT = global_config.EMAIL_PORT
+EMAIL_HOST_USER = global_config.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = get_secret('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+
+
 # Minutes until the verification link sent to the email is expired.
 EMAIL_VERIFICATION_EXPIRY_MINUTES = 15
 

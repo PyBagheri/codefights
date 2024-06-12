@@ -29,54 +29,23 @@ services:
       - ./games/:/main/games/
       - ./templates/:/main/templates/
       - ./manage.py:/main/manage.py
-    environment:
-      # See the comments below on nginx's env vars as to
-      # why we use 127.0.0.1 here instead of localhost.
-      MEDIA_URL: http://127.0.0.1:8000/media/
-      STATIC_URL: http://127.0.0.1:8000/static/
 
+      # For development, let django serve the static files.
+      - ./static/:/main/static/
     # Only for development.
     entrypoint: python3 manage.py runserver 0.0.0.0:8000
-    
-  
+    ports:
+      - 8000:8000
+    environment:
+      # ONLY for development.
+      DJANGO_SECRET_KEY: 'django-insecure-@t1x_j+=5)=9n%67!3w4c@^&06k4i_7eo_av)ua0)r2)@n1xp2'
+      POSTGRES_PASSWORD: postgres
+      EMAIL_HOST_PASSWORD: testpassword123
+
+
   # For WebSockets. Later ...
   # async_web:
   #   ...
-
-  nginx:
-    extends:
-      file: compose.base.yaml
-      service: nginx
-    ports:
-      - 8000:80
-    volumes:
-      # By mounting the static/ instead of the staticfiles/,
-      # we don't need to run collectstatic in development every
-      # time we change some static files. We also add admin's
-      # static files separately, as we need to collectstatic
-      # to get them.
-      - ./static/:/staticfiles/
-      - ./staticfiles/admin/:/staticfiles/admin/
-
-      - ./media_dev/:/media_dev/
-      - ./logs_dev/nginx/:/var/log/nginx/
-    environment:
-      SERVER_MAIN_DOMAIN: localhost
-      
-      # To have a different origin/domain name from the main
-      # domain name (here, for dev, it's 'localhost'), we use
-      # the actual IP of localhost (which will count as a
-      # different origin). This way nginx will serve both the
-      # main and the files domains. For production, we must
-      # choose proper domains (e.g., a subdomain for files).
-      SERVER_FILES_DOMAIN: 127.0.0.1
-
-      # Use these paths for bind monuting the directories.
-      MEDIA_ROOT: /media_dev/
-      STATIC_ROOT: /staticfiles/
-
-      MEDIA_URL: /media/
-      STATIC_URL: /static/
   
 
   redis:
@@ -95,11 +64,11 @@ services:
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
     
-    # only for development.
     environment:
-      POSTGRES_USER: "postgres"
-    user: postgres
-
+      # ONLY for development. These are for the initial DB superuser.
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+ 
 
   simulator:
     extends:
@@ -161,9 +130,15 @@ services:
       - ./templates/:/main/templates/
       - ./manage.py:/main/manage.py
       - ./result_processor/:/main/result_processor/
+    environment:
+      # ONLY for development.
+      POSTGRES_PASSWORD: postgres
 
 
 volumes:
+  # tmpfs volumes cannot be shared between containers,
+  # so we use a normal docker volume.
   redis_sock_dir_dev:
+
   postgres_data_dev:
     external: true
