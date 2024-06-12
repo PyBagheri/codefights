@@ -23,6 +23,7 @@
             </div>
             <div class="header-right">
                 {% if request.user.is_authenticated %}
+                <div class="header-username">@{{ request.user.username }}</div>
                 <a class="header-settings" href="{% url 'settings' %}"><ion-icon name="settings-outline"></ion-icon></a>
                 {% else %}
                 <a class="header-button" href="{% url 'login' %}">Log In</a>
