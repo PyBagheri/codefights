@@ -37,6 +37,15 @@ ARG PRODUCTION_GID
 # As suggested in the second link, we're creating the user for
 # production in the image build stage. If no group ID is specified,
 # then we use the user's default group.
+#
+# By default, /data/ is owned by redis. It would be better if
+# we ran the service with user 'redis'. But for now, we just
+# change the owner.
+#
+# TODO: Use networks for communication instead of the UNIX socket;
+# the speed advantage isn't worth the mess and labour it requires
+# to share the socket file with correct permission and ownership
+# and stuff. ALSO, run this service as the user 'redis', not 'app'.
 
 RUN <<EOR
     if [ -n "${PRODUCTION_UID}" ]; then
@@ -49,6 +58,8 @@ RUN <<EOR
 
         mkdir -p /var/run/redis/
         chown -R ${PRODUCTION_UID}:${PRODUCTION_GID} /var/run/redis/
+
+        chown -R ${PRODUCTION_UID}:${PRODUCTION_GID} /data/
     fi
 EOR
 
