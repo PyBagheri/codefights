@@ -33,7 +33,7 @@ class ResultTest(SimulatorTests, unittest.TestCase):
             'fight_id': 1234,
             'game': 'testgame1',
             'game_settings': {'test_args': test_args},
-            'codes_filenames': ['testcode1.py'],
+            'codes_filenames': ['fights/testcode1.py'],
         }
 
         res = self.request_simulation_and_result(data)

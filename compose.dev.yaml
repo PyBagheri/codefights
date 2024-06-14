@@ -144,6 +144,5 @@ volumes:
   # tmpfs volumes cannot be shared between containers,
   # so we use a normal docker volume.
   redis_sock_dir_dev:
-
+  
   postgres_data_dev:
-    external: true
