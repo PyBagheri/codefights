@@ -98,7 +98,7 @@ which contain the HTML files and the static files (css, js, ...), respectively.
 
 
 > [!WARNING]
-> This `templates/` contains the HTML files, which is different from the optional `templates/` in the root of the game directory which contains starter Python codes that for the players.
+> This `templates/` contains the HTML files, which is different from the optional `templates/` in the root of the game directory which contains starter Python codes for the players.
 
 
 ### Registering Games
