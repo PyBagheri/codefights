@@ -238,7 +238,7 @@ html, html input, body, body input {
   background-color: rgba(49, 72, 143, 0.168627451);
   box-sizing: border-box;
   flex-basis: 32rem;
-  max-width: 32rem;
+  min-width: 32rem;
   color: white;
 }
 .sidebar .sidebar-sticky-wrapper {

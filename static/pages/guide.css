@@ -11,12 +11,17 @@
   margin-bottom: 0.5rem;
 }
 .info .guide-text {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin-bottom: 2rem;
 }
-.info .guide-text code {
+.info .guide-text code.hljs {
   background-color: #000215;
   border-radius: 0.5rem;
+}
+.info .guide-text code:not(.hljs) {
+  background-color: #000215;
+  padding: 0.2rem 0.3rem;
+  border-radius: 0.3rem;
 }
 
 .sidebar .btn-view-games {
