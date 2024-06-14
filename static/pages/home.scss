@@ -16,13 +16,21 @@
     }
 
     .home-text {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
 
         margin-bottom: 2rem;
 
-        code {
+        // code blocks
+        code.hljs {
             background-color: #000215;
             border-radius: .5rem;
+        }
+
+        // inline codes
+        code:not(.hljs) {
+            background-color: #000215;
+            padding: .2rem .3rem;
+            border-radius: .3rem;
         }
     }
 }
