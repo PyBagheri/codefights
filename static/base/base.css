@@ -58,11 +58,10 @@ html, html input, body, body input {
   }
 }
 .main .header .header-right .header-username {
-  margin-right: 2rem;
+  margin-right: 2.5rem;
   font-size: 1.3rem;
-  background: rgb(100, 50, 151);
-  padding: 0.2rem 0.4rem;
-  border-radius: 0.3rem;
+  color: #989eff;
+  margin-bottom: 0.1rem;
 }
 .main .header .header-right .header-settings {
   user-select: none;

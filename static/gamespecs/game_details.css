@@ -11,12 +11,18 @@
   margin-bottom: 0.5rem;
 }
 .info .game-docs {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  line-height: 2.2rem;
   margin-bottom: 2rem;
 }
-.info .game-docs code {
+.info .game-docs code.hljs {
   background-color: #000215;
   border-radius: 0.5rem;
+}
+.info .game-docs code:not(.hljs) {
+  background-color: #000215;
+  padding: 0.2rem 0.3rem;
+  border-radius: 0.3rem;
 }
 .info .game-template-list-label {
   font-size: 2rem;
