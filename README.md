@@ -3,7 +3,7 @@
 [**Codefights**](https://codefights.b32.ir) is a platform where user-uploaded codes can fight in different games. Users specify their game strategies in advance through their code, and the strategies face each other in a simulation.
 
 <p align="center">
-<img src="https://i.ibb.co/Wz4bmQP/tanks2.png" alt="Tanks" width="500px">
+<img src="https://github.com/PyBagheri/codefights/assets/22708670/7b974be8-3b25-4b79-a97a-cab2a019989f" alt="Tanks" width="500px">
 </p>
 
 
