@@ -17,7 +17,7 @@ CRASH_DAMAGE = 10
 # The radius (in squares) around the target that
 # a random square will be chosen from. This is
 # only for when the missile has been fired while
-# also make a move command.
+# also making a move command.
 MISSILE_RAND_RADIUS = 1
 
 
