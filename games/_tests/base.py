@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from games._tests.coderunner import CRController
-from games import GAME_CLASSES
+from games.index import GAME_CLASSES
 
 
 GAMES_ROOT = Path(__file__).parent.parent

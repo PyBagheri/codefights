@@ -187,7 +187,6 @@ class Tanks(Game):
                 prev_x = x = self.players_states[i]['x']
                 prev_y = y = self.players_states[i]['y']
 
-                # The velocity is "per tick".
                 if direction == UP:
                     y += 1
                 elif direction == RIGHT:
@@ -344,9 +343,6 @@ class Tanks(Game):
                                
             self.apply_decisions(self.players_alive[0], decision1)
             self.apply_decisions(self.players_alive[1], decision2)
-                        
-            if self.check_win_or_draw():
-                break
 
             self.flow.append(deepcopy([list(i.values()) for i in self.players_states]))
             
